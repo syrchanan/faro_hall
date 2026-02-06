@@ -1,0 +1,92 @@
+# Ignore version control
+.git
+.hg
+.svn
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.ipynb_checkpoints/
+.venv/
+venv/
+ENV/
+.env/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+.Ruserdata
+.Rprofile
+.Renviron
+.Rproj.user/
+.Rcheck/
+.Rproj.user/
+
+# Julia
+*.jl.cov
+*.jl.*.cov
+*.jl.mem
+*.jl.*.mem
+*.jl.*.ji
+*.ji
+.julia/
+.juliaenvironments/
+
+# Node
+node_modules/
+
+# OS/Editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*.bak
+*.tmp
+*.log
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+*.o
+*.so
+*.dll
+*.dylib
+*.exe
+*.out
+*.app
+*.bin
+
+# Docker
+Dockerfile*
+.dockerignore
+
+# Misc
+*.tar.gz
+*.zip
+*.tar
+*.gz
+*.bz2
+*.7z
+*.rar
+*.pdf
+*.sqlite
+*.db
+*.rdb
+*.h5
+*.hdf5
+*.feather
+*.parquet
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.ppt
+*.pptx
+*.doc
+*.docx
+*.md.bak

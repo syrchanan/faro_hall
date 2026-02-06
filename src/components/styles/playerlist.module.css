@@ -1,0 +1,63 @@
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid rgba(201, 168, 76, 0.2);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #e8dcc8;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.player:hover {
+  border-color: rgba(201, 168, 76, 0.5);
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.current {
+  border-color: #c9a84c;
+  background: rgba(201, 168, 76, 0.15);
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.2);
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c9a84c, #a67c2e);
+  color: #1a0e00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.info {
+  min-width: 0;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bank {
+  font-size: 0.8rem;
+  color: #8ec88e;
+  font-weight: 700;
+}

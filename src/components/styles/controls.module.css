@@ -1,0 +1,39 @@
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 0;
+  align-items: center;
+}
+
+.controls button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  background: rgba(0, 0, 0, 0.3);
+  color: #e8dcc8;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.controls button:hover {
+  background: rgba(201, 168, 76, 0.2);
+  border-color: #c9a84c;
+}
+
+.controls input {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  background: rgba(0, 0, 0, 0.3);
+  color: #e8dcc8;
+  font-size: 0.85rem;
+  max-width: 180px;
+}
+
+.controls input:focus {
+  outline: 2px solid #c9a84c;
+  outline-offset: 1px;
+}

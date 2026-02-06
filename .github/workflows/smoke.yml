@@ -1,0 +1,30 @@
+name: smoke
+
+on:
+  pull_request:
+  push:
+    branches: [ main ]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies (prefer ci)
+        run: |
+          npm ci || npm install
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Build (Next) and export
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
+        run: |
+          npm run build
+          npm run export
+      - name: List exported files
+        run: ls -la out || true

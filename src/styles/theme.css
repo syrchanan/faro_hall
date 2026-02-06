@@ -1,0 +1,48 @@
+:root {
+  /* Casino felt */
+  --felt-green: #0d5c2e;
+  --felt-dark: #0a4d26;
+  --felt-light: #117a3e;
+
+  /* Gold / accent */
+  --gold: #c9a84c;
+  --gold-light: #dbb85c;
+  --gold-dim: rgba(201, 168, 76, 0.3);
+
+  /* Copper (for coppered bets) */
+  --copper: #b87333;
+  --copper-light: #d4935a;
+
+  /* Text */
+  --text-cream: #e8dcc8;
+  --text-muted: rgba(232, 220, 200, 0.6);
+  --text-white: #ffffff;
+
+  /* Cards */
+  --card-bg: #fffef5;
+  --card-red: #c00;
+  --card-black: #111;
+
+  /* Semantic */
+  --win-green: #4ade80;
+  --lose-red: #f87171;
+  --push-yellow: #fbbf24;
+
+  /* UI */
+  --bg-overlay: rgba(0, 0, 0, 0.25);
+  --border-subtle: rgba(201, 168, 76, 0.2);
+  --focus: #60a5fa;
+}
+
+.dark-theme {
+  --felt-green: #062a15;
+  --felt-dark: #041d0e;
+  --felt-light: #0a4d26;
+  --text-cream: #d4c8b4;
+  --card-bg: #f5f0e5;
+}
+
+:where(:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" viewBox="0 0 200 300">
+  <rect width="200" height="300" rx="12" ry="12" fill="#ffffff" stroke="#222" stroke-opacity="0.06"/>
+  <!-- corner rank -->
+  <text x="14" y="28" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="#c91e2a">A</text>
+  <g transform="translate(12,36) scale(0.9)" fill="#c91e2a">
+    <!-- small heart in corner -->
+    <path d="M8 4 C8 1.5 10.5 0 12 0 C13.5 0 16 1.6 16 4 C16 7.6 12 9.8 12 13 L12 13 L12 13 C12 13 12 13 12 13 C12 9.8 8 7.6 8 4 Z"/>
+  </g>
+
+  <!-- central big heart -->
+  <g transform="translate(100,150) scale(1.5) translate(-12,-12)">
+    <path d="M12 4 C12 1.8 14 0 16 0 C18 0 20 1.6 20 4 C20 7.9 16 10.2 16 14 L16 14 L16 14 C16 10.2 12 7.9 12 4 Z" fill="#c91e2a"/>
+  </g>
+</svg>

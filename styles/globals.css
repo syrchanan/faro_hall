@@ -1,0 +1,302 @@
+@import '../src/styles/theme.css';
+
+html, body, #__next { height: 100%; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--felt-green);
+  color: var(--text-cream);
+  line-height: 1.5;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+/* App wrapper */
+.faro-app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.faro-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 2px solid var(--gold);
+}
+
+.faro-title {
+  font-size: 1.5rem;
+  margin: 0;
+  color: var(--gold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-weight: 800;
+}
+
+/* Layout */
+.faro-layout {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  padding: 16px 24px;
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .faro-layout {
+    grid-template-columns: 1fr;
+    padding: 12px;
+  }
+}
+
+.faro-sidebar {
+  min-width: 0;
+}
+
+.faro-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+/* Table section */
+.faro-table {
+  background: linear-gradient(145deg, #0a4d26, #0d5c2e);
+  border-radius: 12px;
+  padding: 20px;
+  border: 2px solid rgba(201, 168, 76, 0.3);
+}
+
+.faro-cards-display {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.faro-card-slot {
+  text-align: center;
+}
+
+.faro-card-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.faro-card {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.faro-card-placeholder {
+  width: 72px;
+  height: 100px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: rgba(255, 255, 255, 0.15);
+}
+
+.faro-card-loser {
+  filter: drop-shadow(0 0 8px rgba(248, 113, 113, 0.4));
+}
+
+.faro-card-winner {
+  filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.4));
+}
+
+.faro-card-soda {
+  opacity: 0.7;
+}
+
+.faro-info-bar {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.faro-hock-badge {
+  background: var(--copper);
+  color: #1a0e00;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.faro-message {
+  text-align: center;
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  color: var(--text-cream);
+}
+
+/* Betting controls */
+.faro-betting-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+.faro-chips {
+  display: flex;
+  gap: 8px;
+}
+
+.faro-chip-selected {
+  box-shadow: 0 0 0 3px var(--gold), 0 4px 12px rgba(201, 168, 76, 0.4) !important;
+  transform: scale(1.1);
+}
+
+.faro-bet-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Buttons */
+.faro-btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-cream);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 44px;
+}
+
+.faro-btn:hover {
+  background: rgba(201, 168, 76, 0.2);
+  border-color: var(--gold);
+}
+
+.faro-btn:active {
+  transform: scale(0.97);
+}
+
+.faro-btn-copper {
+  border-color: rgba(184, 115, 51, 0.5);
+}
+
+.faro-btn-copper-active {
+  background: linear-gradient(135deg, #b87333, #8b5a2b) !important;
+  color: #fff !important;
+  border-color: #d4935a !important;
+}
+
+.faro-btn-place {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.6), rgba(29, 78, 216, 0.6));
+  border-color: rgba(96, 165, 250, 0.4);
+}
+
+.faro-btn-place:hover {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.8), rgba(29, 78, 216, 0.8));
+}
+
+.faro-btn-deal {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.6), rgba(21, 128, 61, 0.6));
+  border-color: rgba(74, 222, 128, 0.4);
+  font-size: 1rem;
+  padding: 10px 28px;
+}
+
+.faro-btn-deal:hover {
+  background: linear-gradient(135deg, rgba(22, 163, 74, 0.8), rgba(21, 128, 61, 0.8));
+}
+
+/* Loading state */
+.faro-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  gap: 16px;
+}
+
+.faro-loading h1 {
+  color: var(--gold);
+  font-size: 2rem;
+}
+
+.faro-loading button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: 2px solid var(--gold);
+  background: transparent;
+  color: var(--gold);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* General button reset for components */
+button {
+  font-family: inherit;
+}
+
+/* Utility */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+/* Mobile: stack everything */
+@media (max-width: 768px) {
+  .faro-header {
+    padding: 12px 16px;
+  }
+
+  .faro-title {
+    font-size: 1.2rem;
+  }
+
+  .faro-cards-display {
+    gap: 12px;
+  }
+
+  .faro-betting-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .faro-chips {
+    justify-content: center;
+  }
+
+  .faro-bet-actions {
+    justify-content: center;
+  }
+}

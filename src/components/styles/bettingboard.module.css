@@ -1,0 +1,93 @@
+.board {
+  background: linear-gradient(145deg, #0a4d26, #0d5c2e);
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.heading {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #c9a84c;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.cell {
+  position: relative;
+  background: rgba(0, 0, 0, 0.25);
+  border: 2px solid rgba(201, 168, 76, 0.25);
+  border-radius: 8px;
+  padding: 10px 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.cell:hover {
+  border-color: rgba(201, 168, 76, 0.6);
+  background: rgba(201, 168, 76, 0.1);
+}
+
+.selected {
+  border-color: #c9a84c;
+  background: rgba(201, 168, 76, 0.2);
+  box-shadow: 0 0 10px rgba(201, 168, 76, 0.3);
+}
+
+.rankLabel {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.betIndicator {
+  margin-top: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #8ec88e;
+}
+
+.copperIndicator {
+  color: #d4935a;
+}
+
+.winHighlight {
+  animation: winPulse 0.6s ease;
+  border-color: #4ade80;
+  box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
+}
+
+.loseHighlight {
+  animation: losePulse 0.6s ease;
+  border-color: #f87171;
+  box-shadow: 0 0 12px rgba(248, 113, 113, 0.4);
+}
+
+@keyframes winPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes losePulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}

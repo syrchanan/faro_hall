@@ -1,0 +1,72 @@
+.panel {
+  background: linear-gradient(145deg, #0a4d26, #0d5c2e);
+  border-radius: 10px;
+  padding: 16px;
+  color: #e8dcc8;
+}
+
+.heading {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #c9a84c;
+}
+
+.grid {
+  display: grid;
+  gap: 8px;
+}
+
+.cell {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 6px;
+  padding: 8px;
+  text-align: center;
+  min-width: 0;
+}
+
+.rank {
+  font-size: 0.75rem;
+  color: #c9a84c;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.count {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.markers {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.markers button {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  background: rgba(0, 0, 0, 0.3);
+  color: #999;
+  font-size: 0.625rem;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.15s ease;
+}
+
+.markers button:hover {
+  border-color: #c9a84c;
+}
+
+.on {
+  background: linear-gradient(135deg, #c9a84c, #a67c2e) !important;
+  color: #1a0e00 !important;
+  border-color: #dbb85c !important;
+}

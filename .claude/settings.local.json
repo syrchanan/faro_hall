@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"C:\\\\_git_repos\\\\faro_hall\\\\src\\\\components\\\\styles\"\" 2>/dev/null || echo \"Directory may not exist or is empty \")",
+      "Bash(grep:*)",
+      "Bash(npx next build:*)",
+      "Bash(npm run build:*)",
+      "Bash(ls:*)",
+      "Bash(node ./node_modules/jest/bin/jest.js:*)"
+    ]
+  }
+}
