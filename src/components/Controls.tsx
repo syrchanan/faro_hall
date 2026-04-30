@@ -3,8 +3,6 @@ import styles from './styles/controls.module.css';
 
 export interface ControlsProps { onNewGame: () => void; onLoadSeed: (seed: string) => void; onUndo: () => void; onOpenRules: () => void; seed?: string }
 
-export const useControls = () => { const [rulesOpen, setRulesOpen] = useState(false); return { rulesOpen, openRules: () => setRulesOpen(true), closeRules: () => setRulesOpen(false) }; };
-
 const Controls: React.FC<ControlsProps> = ({ onNewGame, onLoadSeed, onUndo, onOpenRules, seed }) => {
   const [input, setInput] = useState('');
   return (
