@@ -150,10 +150,6 @@ const Home: NextPage = () => {
     if (s.trim()) setSeed(s.trim());
   }, []);
 
-  const handleImportSeed = useCallback((s: string) => {
-    if (s.trim()) setSeed(s.trim());
-  }, []);
-
   if (initError || !game) {
     return (
       <div className="faro-app">
@@ -167,10 +163,6 @@ const Home: NextPage = () => {
   }
 
   // Derive data for components
-  const placedBets: PlacedBet[] = game.bets
-    .filter(b => b.playerId === currentPlayerId)
-    .map(b => ({ rank: b.rank, amount: b.amount, coppered: b.coppered }));
-
   const allBets: PlacedBet[] = game.bets.map(b => ({ rank: b.rank, amount: b.amount, coppered: b.coppered }));
 
   return (
@@ -178,7 +170,7 @@ const Home: NextPage = () => {
       {/* Header */}
       <header className="faro-header">
         <h1 className="faro-title">Faro Hall</h1>
-        <SeedShare seed={seed} onImport={handleImportSeed} />
+        <SeedShare seed={seed} onImport={handleLoadSeed} />
       </header>
 
       <div className="faro-layout">

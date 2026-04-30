@@ -7,9 +7,7 @@ const Rules: NextPage = () => {
     <div className="faro-app">
       <header className="faro-header">
         <h1 className="faro-title">Faro Hall — Rules</h1>
-        <Link href="/">
-          <a className="faro-btn">Back to Game</a>
-        </Link>
+        <Link href="/" className="faro-btn">Back to Game</Link>
       </header>
 
       <main className="container" style={{ color: '#e8dcc8', maxWidth: 800 }}>
@@ -84,9 +82,7 @@ const Rules: NextPage = () => {
         </section>
 
         <section style={{ marginTop: 32, paddingTop: 16, borderTop: '1px solid rgba(201,168,76,0.3)' }}>
-          <Link href="/">
-            <a className="faro-btn">Play Faro</a>
-          </Link>
+          <Link href="/" className="faro-btn">Play Faro</Link>
         </section>
       </main>
     </div>
