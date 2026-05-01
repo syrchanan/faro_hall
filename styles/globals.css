@@ -235,8 +235,8 @@ button { font-family: inherit; cursor: pointer; }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 14px;
-  padding: 14px 18px;
+  gap: 10px;
+  padding: 12px 18px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(201, 168, 76, 0.15);
   border-radius: 12px;
@@ -320,6 +320,105 @@ button { font-family: inherit; cursor: pointer; }
   border-color: rgba(255, 255, 255, 0.35);
   color: var(--text-cream);
   background: rgba(255, 255, 255, 0.06);
+}
+
+/* Custom chip "X" button */
+.btn-custom {
+  min-width: 44px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.btn-custom-on {
+  background: rgba(201, 168, 76, 0.25) !important;
+  border-color: #c9a84c !important;
+  color: #c9a84c !important;
+}
+
+/* Custom amount row */
+.custom-amount-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  width: 100%;
+}
+
+.custom-amount-input {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(201, 168, 76, 0.4);
+  background: rgba(0, 0, 0, 0.35);
+  color: #e8dcc8;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+}
+
+.custom-amount-input:focus {
+  border-color: #c9a84c;
+}
+
+/* ── Turn indicator (always visible, especially useful on mobile) ── */
+.turn-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 10px;
+  position: sticky;
+  top: 8px;
+  z-index: 10;
+  backdrop-filter: blur(6px);
+}
+
+.turn-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #c9a84c, #a67c2e);
+  color: #1a0e00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.72rem;
+  flex-shrink: 0;
+}
+
+.turn-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  flex: 1;
+  min-width: 0;
+}
+
+.turn-name {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #e8dcc8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.turn-sub {
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.turn-copper {
+  font-size: 0.72rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #b87333, #7c4a1a);
+  color: #fff;
+  padding: 2px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
 }
 
 /* ── Loading screen ── */

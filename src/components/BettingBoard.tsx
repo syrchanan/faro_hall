@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import styles from './styles/bettingboard.module.css';
-import { Rank } from '../lib/cards';
-
-const RANK_LABELS: Record<number, string> = {
-  1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7',
-  8: '8', 9: '9', 10: '10', 11: 'J', 12: 'Q', 13: 'K',
-};
+import { Rank, RANK_LABELS } from '../lib/cards';
 
 export interface PlacedBet {
   ranks: Rank[];
   amount: number;
   coppered?: boolean;
+  playerId?: string;
 }
 
 export interface BettingBoardProps {
@@ -19,10 +15,15 @@ export interface BettingBoardProps {
   winnerRank?: Rank;
   loserRank?: Rank;
   className?: string;
+  players?: { id: string; name: string; bankroll: number }[];
 }
 
 function zoneKey(ranks: Rank[]): string {
   return [...ranks].sort((a, b) => a - b).join(',');
+}
+
+function initials(name: string): string {
+  return name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
 }
 
 interface CardDef {
@@ -37,11 +38,6 @@ interface ZoneDef {
   col: number;
   row: number;
 }
-
-// CSS grid: columns alternate card(1fr) / bet-zone(28px), plus 7 card at end
-// Col indices: 1=K/A, 2=K-Q gap, 3=Q/2, 4=Q-J gap, 5=J/3, 6=J-10 gap,
-//              7=10/4, 8=10-9 gap, 9=9/5, 10=9-8 gap, 11=8/6, 12=8-7/6-7 gap, 13=7
-// Row indices: 1=top row, 2=middle bet zones, 3=bottom row
 
 const TOP_CARDS: CardDef[] = [
   { rank: 13, col: 1,  rowStart: 1, rowEnd: 2 },
@@ -64,7 +60,6 @@ const BOTTOM_CARDS: CardDef[] = [
 const SEVEN_CARD: CardDef = { rank: 7, col: 13, rowStart: 1, rowEnd: 4 };
 
 const BET_ZONES: ZoneDef[] = [
-  // Top row horizontal splits
   { ranks: [13, 12], col: 2,  row: 1 },
   { ranks: [12, 11], col: 4,  row: 1 },
   { ranks: [11, 10], col: 6,  row: 1 },
@@ -72,7 +67,6 @@ const BET_ZONES: ZoneDef[] = [
   { ranks: [9,  8],  col: 10, row: 1 },
   { ranks: [8,  7],  col: 12, row: 1 },
 
-  // Bottom row horizontal splits
   { ranks: [1, 2], col: 2,  row: 3 },
   { ranks: [2, 3], col: 4,  row: 3 },
   { ranks: [3, 4], col: 6,  row: 3 },
@@ -80,7 +74,6 @@ const BET_ZONES: ZoneDef[] = [
   { ranks: [5, 6], col: 10, row: 3 },
   { ranks: [6, 7], col: 12, row: 3 },
 
-  // Vertical splits (between top and bottom rows)
   { ranks: [13, 1], col: 1,  row: 2 },
   { ranks: [12, 2], col: 3,  row: 2 },
   { ranks: [11, 3], col: 5,  row: 2 },
@@ -88,16 +81,24 @@ const BET_ZONES: ZoneDef[] = [
   { ranks: [9,  5], col: 9,  row: 2 },
   { ranks: [8,  6], col: 11, row: 2 },
 
-  // 4-way corner bets
   { ranks: [13, 12, 1, 2], col: 2,  row: 2 },
   { ranks: [12, 11, 2, 3], col: 4,  row: 2 },
   { ranks: [11, 10, 3, 4], col: 6,  row: 2 },
   { ranks: [10, 9,  4, 5], col: 8,  row: 2 },
   { ranks: [9,  8,  5, 6], col: 10, row: 2 },
 
-  // 3-way end zone: 8 (top) · 6 (bottom) · 7 (spanning right column)
   { ranks: [8, 6, 7], col: 12, row: 2 },
 ];
+
+// Player colors for chip differentiation (cycles if more than 8 players)
+const PLAYER_COLORS = [
+  '#1d4ed8', '#7c3aed', '#b45309', '#0f766e',
+  '#be185d', '#15803d', '#b91c1c', '#0369a1',
+];
+
+function playerColor(idx: number): string {
+  return PLAYER_COLORS[idx % PLAYER_COLORS.length];
+}
 
 const BettingBoard: React.FC<BettingBoardProps> = ({
   onBet,
@@ -105,23 +106,60 @@ const BettingBoard: React.FC<BettingBoardProps> = ({
   winnerRank,
   loserRank,
   className,
+  players = [],
 }) => {
   const [hoveredRanks, setHoveredRanks] = useState<Rank[] | null>(null);
 
-  const betsByZone = new Map<string, { total: number; hasCoppered: boolean }>();
+  // Build per-player index for color assignment
+  const playerIndex = new Map<string, number>();
+  players.forEach((p, i) => playerIndex.set(p.id, i));
+  const playerNameMap = new Map<string, string>(players.map(p => [p.id, p.name]));
+
+  // Group bets by zone+player for per-player chip rendering
+  // key: zoneKey → Map<playerId, { total, coppered }>
+  const betsByZoneAndPlayer = new Map<string, Map<string, { total: number; coppered: boolean }>>();
   for (const bet of placedBets) {
-    const key = zoneKey(bet.ranks);
-    const prev = betsByZone.get(key) || { total: 0, hasCoppered: false };
-    betsByZone.set(key, {
+    const zk = zoneKey(bet.ranks);
+    if (!betsByZoneAndPlayer.has(zk)) betsByZoneAndPlayer.set(zk, new Map());
+    const playerMap = betsByZoneAndPlayer.get(zk)!;
+    const pid = bet.playerId ?? '__anon__';
+    const prev = playerMap.get(pid) || { total: 0, coppered: false };
+    playerMap.set(pid, {
       total: prev.total + bet.amount,
-      hasCoppered: prev.hasCoppered || !!bet.coppered,
+      coppered: prev.coppered || !!bet.coppered,
     });
   }
 
   const isHov = (rank: Rank) => hoveredRanks?.includes(rank) ?? false;
 
+  const renderBetChips = (key: string) => {
+    const playerMap = betsByZoneAndPlayer.get(key);
+    if (!playerMap || playerMap.size === 0) return null;
+
+    return Array.from(playerMap.entries()).map(([pid, info]) => {
+      const idx = playerIndex.get(pid) ?? 0;
+      const color = info.coppered ? '#b87333' : playerColor(idx);
+      const pName = playerNameMap.get(pid);
+      const initial = pName ? initials(pName) : '';
+      return (
+        <span
+          key={pid}
+          data-player-id={pid}
+          className={styles.chip}
+          style={{ background: color }}
+          title={pName ? `${pName}: $${info.total}${info.coppered ? ' ©' : ''}` : undefined}
+        >
+          {initial && <span className={styles.chipInitial}>{initial}</span>}
+          ${info.total}
+        </span>
+      );
+    });
+  };
+
   const renderCard = (card: CardDef) => {
-    const bet = betsByZone.get(zoneKey([card.rank]));
+    const key = zoneKey([card.rank]);
+    const chips = renderBetChips(key);
+    const hasBet = !!chips && (chips as any[]).length > 0;
     const hovered = isHov(card.rank);
     const isWinner = winnerRank === card.rank;
     const isLoser = loserRank === card.rank;
@@ -136,6 +174,9 @@ const BettingBoard: React.FC<BettingBoardProps> = ({
     ].filter(Boolean).join(' ');
 
     const gridRow = isSpanning ? `${card.rowStart} / ${card.rowEnd}` : String(card.rowStart);
+    const totalBet = hasBet
+      ? (chips as any[]).reduce((sum: number, c: any) => sum + 0, 0)
+      : 0;
 
     return (
       <button
@@ -145,29 +186,26 @@ const BettingBoard: React.FC<BettingBoardProps> = ({
         onClick={() => onBet([card.rank])}
         onMouseEnter={() => setHoveredRanks([card.rank])}
         onMouseLeave={() => setHoveredRanks(null)}
-        aria-label={`Bet on ${RANK_LABELS[card.rank]}${bet ? `, $${bet.total} placed` : ''}`}
+        aria-label={`Bet on ${RANK_LABELS[card.rank]}${hasBet ? `, bets placed` : ''}`}
       >
         <span className={styles.cardRank}>{RANK_LABELS[card.rank]}</span>
         <span className={styles.cardSuit}>♠</span>
-        {bet && (
-          <span className={[styles.chip, bet.hasCoppered ? styles.chipCopper : ''].filter(Boolean).join(' ')}>
-            ${bet.total}
-          </span>
-        )}
+        {hasBet && <div className={styles.chipStack}>{chips}</div>}
       </button>
     );
   };
 
   const renderZone = (zone: ZoneDef) => {
     const key = zoneKey(zone.ranks);
-    const bet = betsByZone.get(key);
+    const chips = renderBetChips(key);
+    const hasBet = !!chips && (chips as any[]).length > 0;
     const isCorner = zone.ranks.length === 4;
     const isVertical = zone.ranks.length === 2 && zone.row === 2;
 
     const cls = [
       styles.zone,
       isCorner ? styles.zoneCorner : isVertical ? styles.zoneVertical : styles.zoneHorizontal,
-      bet ? styles.zoneHasBet : '',
+      hasBet ? styles.zoneHasBet : '',
     ].filter(Boolean).join(' ');
 
     return (
@@ -178,12 +216,10 @@ const BettingBoard: React.FC<BettingBoardProps> = ({
         onClick={() => onBet(zone.ranks)}
         onMouseEnter={() => setHoveredRanks(zone.ranks)}
         onMouseLeave={() => setHoveredRanks(null)}
-        aria-label={`Bet on ${zone.ranks.map(r => RANK_LABELS[r]).join(' & ')}${bet ? `, $${bet.total} placed` : ''}`}
+        aria-label={`Bet on ${zone.ranks.map(r => RANK_LABELS[r]).join(' & ')}${hasBet ? `, bets placed` : ''}`}
       >
-        {bet ? (
-          <span className={[styles.chip, styles.chipSmall, bet.hasCoppered ? styles.chipCopper : ''].filter(Boolean).join(' ')}>
-            ${bet.total}
-          </span>
+        {hasBet ? (
+          <div className={styles.chipStack}>{chips}</div>
         ) : (
           <span className={styles.zoneDot} />
         )}

@@ -138,27 +138,37 @@
 }
 
 /* ── Bet chip indicators ── */
-.chip {
+.chipStack {
   position: absolute;
   bottom: 3px;
   right: 3px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+  pointer-events: none;
+}
+
+.chip {
   background: #1d4ed8;
   color: #fff;
   font-size: 0.6rem;
   font-weight: 700;
-  padding: 1px 5px;
+  padding: 1px 4px;
   border-radius: 8px;
   line-height: 1.5;
-  pointer-events: none;
   white-space: nowrap;
   box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
-.chipSmall {
-  position: relative;
-  bottom: auto;
-  right: auto;
-  font-size: 0.58rem;
+.chipInitial {
+  font-size: 0.55rem;
+  font-weight: 800;
+  opacity: 0.9;
+  letter-spacing: 0.02em;
 }
 
 .chipCopper {

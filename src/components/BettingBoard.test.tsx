@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import BettingBoard from './BettingBoard';
+import { Rank } from '../lib/cards';
 
 const noop = () => {};
 
@@ -47,5 +48,37 @@ describe('BettingBoard layout zones', () => {
     expect(loseBtn).toBeDefined();
     winBtn!.click();
     expect(onBet).toHaveBeenCalledWith([3]);
+  });
+});
+
+describe('BettingBoard per-player bet differentiation', () => {
+  test('shows separate chips for each player when multiple players bet on the same rank', () => {
+    const { container } = render(
+      <BettingBoard
+        onBet={noop}
+        placedBets={[
+          { ranks: [7 as Rank], amount: 10, playerId: 'p1' },
+          { ranks: [7 as Rank], amount: 20, playerId: 'p2' },
+        ]}
+        players={[
+          { id: 'p1', name: 'Alice', bankroll: 100 },
+          { id: 'p2', name: 'Bob', bankroll: 100 },
+        ]}
+      />
+    );
+    expect(container.querySelector('[data-player-id="p1"]')).toBeTruthy();
+    expect(container.querySelector('[data-player-id="p2"]')).toBeTruthy();
+  });
+
+  test('shows a single chip when only one player has bet on a rank', () => {
+    const { container } = render(
+      <BettingBoard
+        onBet={noop}
+        placedBets={[{ ranks: [5 as Rank], amount: 15, playerId: 'p1' }]}
+        players={[{ id: 'p1', name: 'Alice', bankroll: 100 }]}
+      />
+    );
+    expect(container.querySelectorAll('[data-player-id="p1"]').length).toBe(1);
+    expect(container.querySelector('[data-player-id="p2"]')).toBeNull();
   });
 });

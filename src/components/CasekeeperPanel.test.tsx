@@ -56,27 +56,11 @@ describe('CasekeeperPanel', () => {
     expect(kingEmpty.length).toBe(0);
   });
 
-  test('toggles hock and soda markers by rank aria-label', () => {
-    const { getByLabelText } = render(<CasekeeperPanel burnt={[]} />);
-
-    const hockBtn = getByLabelText('Mark 3 as Hock (last card)') as HTMLButtonElement;
-    expect(hockBtn.getAttribute('aria-pressed')).toBe('false');
-    fireEvent.click(hockBtn);
-    expect(hockBtn.getAttribute('aria-pressed')).toBe('true');
-    fireEvent.click(hockBtn);
-    expect(hockBtn.getAttribute('aria-pressed')).toBe('false');
-
-    const sodaBtn = getByLabelText('Mark 5 as Soda (first card)') as HTMLButtonElement;
-    fireEvent.click(sodaBtn);
-    expect(sodaBtn.getAttribute('aria-pressed')).toBe('true');
-  });
-
-  test('calls onToggleMarker with rank string and marker type', () => {
-    const onToggle = jest.fn();
-    const { getByLabelText } = render(
-      <CasekeeperPanel burnt={[]} onToggleMarker={onToggle} />
-    );
-    fireEvent.click(getByLabelText('Mark 7 as Hock (last card)'));
-    expect(onToggle).toHaveBeenCalledWith('7', 'hock');
+  test('does not render H (hock) or S (soda) marker buttons — removed as non-functional', () => {
+    const { container } = render(<CasekeeperPanel burnt={[]} />);
+    const hockBtns = container.querySelectorAll('[aria-label*="Hock"]');
+    const sodaBtns = container.querySelectorAll('[aria-label*="Soda"]');
+    expect(hockBtns.length).toBe(0);
+    expect(sodaBtns.length).toBe(0);
   });
 });

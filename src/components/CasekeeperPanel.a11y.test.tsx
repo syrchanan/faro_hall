@@ -23,22 +23,13 @@ describe('CasekeeperPanel accessibility', () => {
     expect(inlineGridEl).toBeNull();
   });
 
-  test('every rank row has hock and soda toggle buttons with correct aria attributes', () => {
-    const RANK_LABELS: Record<number, string> = {
-      1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7',
-      8: '8', 9: '9', 10: '10', 11: 'J', 12: 'Q', 13: 'K',
-    };
+  test('rank rows have no interactive buttons — H/S markers removed', () => {
     const { container } = render(<CasekeeperPanel burnt={[]} />);
     for (let rank = 1; rank <= 13; rank++) {
-      const label = RANK_LABELS[rank];
       const cell = container.querySelector(`[data-rank="${rank}"]`)!;
       expect(cell).not.toBeNull();
       const buttons = cell.querySelectorAll('button');
-      expect(buttons.length).toBe(2);
-      expect(buttons[0].getAttribute('aria-label')).toBe(`Mark ${label} as Hock (last card)`);
-      expect(buttons[1].getAttribute('aria-label')).toBe(`Mark ${label} as Soda (first card)`);
-      expect(buttons[0].getAttribute('aria-pressed')).toBe('false');
-      expect(buttons[1].getAttribute('aria-pressed')).toBe('false');
+      expect(buttons.length).toBe(0);
     }
   });
 });
