@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>5/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">16.66% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>1/2</span>
+                <span class='fraction'>1/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">37.5% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/5</span>
+                <span class='fraction'>3/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>5/7</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line medium'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -94,7 +94,7 @@
 <a name='L29'></a><a href='#L29'>29</a>
 <a name='L30'></a><a href='#L30'>30</a>
 <a name='L31'></a><a href='#L31'>31</a>
-<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L32'></a><a href='#L32'>32</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -102,22 +102,22 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">8x</span>
-<span class="cline-any cline-yes">97x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">16x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -128,28 +128,28 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React from 'react';
 &nbsp;
 type Props = {
-  seed: string;
-  setSeed: (s: string) =&gt; void;
-  onClearSaved: () =&gt; void;
-  onImportFile: (file: File | null) =&gt; void;
+  seed?: string;
+  setSeed?: (s: string) =&gt; void;
+  onClearSaved?: () =&gt; void;
+  onImportFile?: (file: File | null) =&gt; void;
 };
 &nbsp;
-export default function SeedControls({ seed, setSeed, onClearSaved, onImportFile }: Props) {
+export default function SeedControls({ seed = <span class="branch-0 cbranch-no" title="branch not covered" >'',</span> setSeed = <span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >() =</span>&gt; {},</span> onClearSaved = <span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >() =</span>&gt; {},</span> onImportFile = <span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >() =</span>&gt; {} </span>}: Props) {
   return (
-    &lt;section style={{ marginBottom: 16 }} aria-label="seed-controls"&gt;
-      &lt;label style={{ display: 'inline-block' }}&gt;Seed: 
-        &lt;input id="seed" aria-label="Seed" value={seed} onChange={e =&gt; setSeed(e.target.value)} style={{ width: 300, marginLeft: 8 }} data-testid="seed-input" /&gt;
+    &lt;section className="seed-controls" aria-label="seed controls"&gt;
+      &lt;label className="seed-label"&gt;Seed:
+        &lt;input id="seed" aria-label="Seed input" value={seed} onChange={<span class="fstat-no" title="function not covered" >e </span>=&gt; <span class="cstat-no" title="statement not covered" >setSeed(e.target.value)}</span> className="seed-input" data-testid="seed-input" /&gt;
       &lt;/label&gt;
-      &lt;button onClick={() =&gt; setSeed(seed + '-' + Date.now())} style={{ marginLeft: 8 }} data-testid="new-seed-button"&gt;New Seed&lt;/button&gt;
-      &lt;button onClick={() =&gt; { setSeed('demo-seed-1'); }} style={{ marginLeft: 8 }} data-testid="reset-seed-button"&gt;Reset to Demo Seed&lt;/button&gt;
-      &lt;button onClick={onClearSaved} style={{ marginLeft: 8 }} data-testid="clear-saved-button"&gt;Clear Saved&lt;/button&gt;
-      &lt;label htmlFor="faro-import-file" style={{ marginLeft: 8 }}&gt;Import JSON
+      &lt;button aria-label="Generate new seed" onClick={<span class="fstat-no" title="function not covered" >() =</span>&gt; <span class="cstat-no" title="statement not covered" >setSeed(seed + '-' + Date.now())}</span> className="seed-button" data-testid="new-seed-button"&gt;New Seed&lt;/button&gt;
+      &lt;button aria-label="Reset to demo seed" onClick={() =&gt; { setSeed('demo-seed-1'); }} className="seed-button" data-testid="reset-seed-button"&gt;Reset to Demo Seed&lt;/button&gt;
+      &lt;button aria-label="Clear saved" onClick={onClearSaved} className="seed-button" data-testid="clear-saved-button"&gt;Clear Saved&lt;/button&gt;
+      &lt;label htmlFor="faro-import-file" className="import-label"&gt;Import JSON
         &lt;input
           id="faro-import-file"
           type="file"
           accept="application/json"
           onChange={e =&gt; onImportFile(e.target.files ? e.target.files[0] : <span class="branch-1 cbranch-no" title="branch not covered" >null)</span>}
-          style={{ display: 'inline-block', marginLeft: 8 }}
+          className="import-input"
           data-testid="faro-import-input"
         /&gt;
       &lt;/label&gt;
@@ -163,7 +163,7 @@ export default function SeedControls({ seed, setSeed, onClearSaved, onImportFile
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-02-06T17:13:17.197Z
+                at 2026-05-01T23:39:26.108Z
             </div>
         <script src="../prettify.js"></script>
         <script>
