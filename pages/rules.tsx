@@ -70,8 +70,8 @@ const Rules: NextPage = () => {
   return (
     <div className="faro-app">
       <header className="faro-header">
-        <h1 className="faro-title">Faro Hall — Rules</h1>
-        <Link href="/" className="faro-btn">Back to Game</Link>
+        <h1 className="faro-title">Rules</h1>
+        <Link href="/" className="faro-btn" aria-label="Back to Game">← Play</Link>
       </header>
 
       <main className={styles.rulesContent}>

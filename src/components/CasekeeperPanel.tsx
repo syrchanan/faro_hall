@@ -82,7 +82,8 @@ const CasekeeperPanel: React.FC<CasekeeperPanelProps> = ({
               <div className={styles.markerBtns}>
                 <button
                   aria-pressed={m.hock}
-                  aria-label={`Toggle hock for rank ${rank}`}
+                  aria-label={`Mark ${label} as Hock (last card)`}
+                  title={`Hock — mark ${label} as the last card (no bets resolve)`}
                   className={m.hock ? styles.markerOn : styles.marker}
                   onClick={() => toggle(rank, 'hock')}
                 >
@@ -90,7 +91,8 @@ const CasekeeperPanel: React.FC<CasekeeperPanelProps> = ({
                 </button>
                 <button
                   aria-pressed={m.soda}
-                  aria-label={`Toggle soda for rank ${rank}`}
+                  aria-label={`Mark ${label} as Soda (first card)`}
+                  title={`Soda — mark ${label} as the opening card (no bets resolve)`}
                   className={m.soda ? styles.markerOn : styles.marker}
                   onClick={() => toggle(rank, 'soda')}
                 >

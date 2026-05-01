@@ -94,6 +94,9 @@ const BET_ZONES: ZoneDef[] = [
   { ranks: [11, 10, 3, 4], col: 6,  row: 2 },
   { ranks: [10, 9,  4, 5], col: 8,  row: 2 },
   { ranks: [9,  8,  5, 6], col: 10, row: 2 },
+
+  // 3-way end zone: 8 (top) · 6 (bottom) · 7 (spanning right column)
+  { ranks: [8, 6, 7], col: 12, row: 2 },
 ];
 
 const BettingBoard: React.FC<BettingBoardProps> = ({

@@ -172,8 +172,17 @@
 
 /* ── Responsive ── */
 @media (max-width: 600px) {
-  .rulesContent { padding: 16px 16px 32px; }
-  .section { padding: 18px 16px; }
-  .step { grid-template-columns: 26px 1fr; gap: 10px; }
-  .stepNum { width: 26px; height: 26px; font-size: 0.7rem; }
+  .rulesContent { padding: 12px 12px 28px; gap: 14px; }
+  .section { padding: 16px 14px; }
+  .sectionHeading { font-size: 0.68rem; margin-bottom: 12px; }
+  .body { font-size: 0.85rem; }
+  .step { grid-template-columns: 24px 1fr; gap: 9px; }
+  .stepNum { width: 24px; height: 24px; font-size: 0.68rem; }
+  .stepBody { font-size: 0.85rem; }
+  .subItem { font-size: 0.82rem; padding-left: 14px; }
+  .term { font-size: 0.68rem; }
+  .desc { font-size: 0.84rem; }
+  .tip { font-size: 0.85rem; }
+  .termItem { padding: 10px 12px; }
+  .cta { padding-top: 4px; }
 }

@@ -371,20 +371,29 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 @media (max-width: 600px) {
-  .faro-header { padding: 10px 16px; }
-  .faro-title  { font-size: 1.1rem; }
+  .faro-header {
+    padding: 10px 14px;
+    gap: 8px;
+  }
+  .faro-title { font-size: 1rem; letter-spacing: 0.06em; }
 
   .faro-meta {
     grid-template-columns: 1fr;
   }
 
-  .deal-cards { gap: 12px; }
+  .deal-cards { gap: 10px; }
+  .deal-card-empty { width: 52px; height: 74px; }
 
   .faro-action-bar {
     flex-direction: column;
     align-items: stretch;
+    padding: 12px 14px;
+    gap: 10px;
   }
 
-  .action-chips { justify-content: center; }
-  .action-right { justify-content: center; }
+  .action-chips { justify-content: center; flex-wrap: wrap; }
+  .action-right { justify-content: center; flex-wrap: wrap; }
+
+  /* Ensure buttons are large enough for touch */
+  .faro-btn { min-height: 44px; padding: 10px 16px; }
 }
