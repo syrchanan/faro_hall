@@ -1,12 +1,12 @@
 import React from 'react';
-import { render, act, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import { axe, toHaveNoViolations } from 'jest-axe';
 import CasekeeperPanel from './CasekeeperPanel';
 
 expect.extend(toHaveNoViolations as any);
 
-describe('CasekeeperPanel accessibility & responsive behavior', () => {
-  const burnt = [ { rank: 3 }, { rank: 3 }, { rank: 5 } ];
+describe('CasekeeperPanel accessibility', () => {
+  const burnt = [{ rank: 3 }, { rank: 3 }, { rank: 5 }];
 
   test('has no automated accessibility violations', async () => {
     const { container } = render(<CasekeeperPanel burnt={burnt as any} />);
@@ -14,26 +14,26 @@ describe('CasekeeperPanel accessibility & responsive behavior', () => {
     expect(results).toHaveNoViolations();
   });
 
-  test('adjusts grid columns based on viewport width', async () => {
-    // small screen
-    (global as any).innerWidth = 500;
+  test('renders as a single flat list — one row per rank, no responsive grid columns', () => {
     const { container } = render(<CasekeeperPanel burnt={burnt as any} />);
-    // the grid element is the first div with a grid style
-    const grid = container.querySelector('div[style*="grid-template-columns"]') as HTMLElement | null;
-    expect(grid).not.toBeNull();
-    expect(grid!.style.gridTemplateColumns).toContain('repeat(4');
+    const rows = container.querySelectorAll('[data-rank]');
+    expect(rows.length).toBe(13);
+    // no inline grid-template-columns style (removed responsive grid)
+    const inlineGridEl = container.querySelector('[style*="grid-template-columns"]');
+    expect(inlineGridEl).toBeNull();
+  });
 
-    // now simulate resize to larger screen
-    (global as any).innerWidth = 1024;
-    act(() => {
-      window.dispatchEvent(new Event('resize'));
-    });
-
-    await waitFor(() => {
-      // after resize effect runs, columns should switch to 7
-      const g = container.querySelector('div[style*="grid-template-columns"]') as HTMLElement | null;
-      expect(g).not.toBeNull();
-      expect(g!.style.gridTemplateColumns).toContain('repeat(7');
-    });
+  test('every rank row has hock and soda toggle buttons with correct aria attributes', () => {
+    const { container } = render(<CasekeeperPanel burnt={[]} />);
+    for (let rank = 1; rank <= 13; rank++) {
+      const cell = container.querySelector(`[data-rank="${rank}"]`)!;
+      expect(cell).not.toBeNull();
+      const buttons = cell.querySelectorAll('button');
+      expect(buttons.length).toBe(2);
+      expect(buttons[0].getAttribute('aria-label')).toBe(`Toggle hock for rank ${rank}`);
+      expect(buttons[1].getAttribute('aria-label')).toBe(`Toggle soda for rank ${rank}`);
+      expect(buttons[0].getAttribute('aria-pressed')).toBe('false');
+      expect(buttons[1].getAttribute('aria-pressed')).toBe('false');
+    }
   });
 });

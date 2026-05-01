@@ -84,7 +84,7 @@ export default function Home() {
     const amt = Number(amount) || 0;
     if (!amt || !gameState) return;
     try {
-      const betObj = { playerId: currentPlayer, rank: Number(rank), amount: amt, coppered } as any;
+      const betObj = { playerId: currentPlayer, ranks: [Number(rank)], amount: amt, coppered } as any;
       const newState = libPlaceBet(gameState, betObj);
       setGameState(newState);
       // reflect in UI copies for backwards compatibility
