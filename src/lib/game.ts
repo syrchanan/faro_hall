@@ -3,7 +3,7 @@ import { mulberry32, seedFromString } from './rng';
 import { BetSchema, GameStateSchema, CardSchema, PlayerSchema } from './schemas';
 import { CasekeepState, createCasekeep, recordDraw } from './casekeep';
 
-export type Bet = { playerId: string; rank: Rank; coppered?: boolean; amount: number };
+export type Bet = { playerId: string; ranks: Rank[]; coppered?: boolean; amount: number };
 
 export type GameState = {
   seed: string;
@@ -63,7 +63,7 @@ export function placeBet(state: GameState, bet: Bet): GameState {
   const playersCopy = state.players.map(p => ({ ...p }));
   playersCopy[pIndex] = { ...playersCopy[pIndex], bankroll: playersCopy[pIndex].bankroll - parsed.amount };
 
-  const betObj: Bet = { playerId: parsed.playerId, rank: parsed.rank as Rank, coppered: parsed.coppered, amount: parsed.amount };
+  const betObj: Bet = { playerId: parsed.playerId, ranks: parsed.ranks as Rank[], coppered: parsed.coppered, amount: parsed.amount };
   const betsCopy = state.bets.concat([betObj]);
   return { ...state, bets: betsCopy, players: playersCopy };
 }
@@ -89,8 +89,8 @@ export function resolveTurn(state: GameState): { state: GameState; winnerCard?: 
   for (const b of state.bets) {
     const pIdx = playersCopy.findIndex(p => p.id === b.playerId);
     if (pIdx === -1) continue;
-    const wouldWin = (b.rank === winner.rank);
-    const wouldLose = (b.rank === loser.rank);
+    const wouldWin = b.ranks.some(r => r === winner.rank);
+    const wouldLose = b.ranks.some(r => r === loser.rank);
 
     if (wouldWin && wouldLose) {
       // Split — both cards same rank — return half stake (house takes half)

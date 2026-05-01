@@ -1,67 +1,92 @@
 @import '../src/styles/theme.css';
 
+/* ── Reset ── */
 html, body, #__next { height: 100%; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; }
 
 body {
   font-family: 'Segoe UI', system-ui, -apple-system, Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: var(--felt-green);
+  background: var(--felt-dark);
   color: var(--text-cream);
   line-height: 1.5;
 }
 
-*, *::before, *::after { box-sizing: border-box; }
+button { font-family: inherit; cursor: pointer; }
 
-/* App wrapper */
+/* ── App shell ── */
 .faro-app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: radial-gradient(ellipse at 50% 0%, #0e6631 0%, #062a15 70%);
 }
 
-/* Header */
+/* ── Header ── */
 .faro-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 12px;
-  padding: 16px 24px;
-  background: rgba(0, 0, 0, 0.3);
-  border-bottom: 2px solid var(--gold);
+  gap: 10px;
+  padding: 14px 28px;
+  background: rgba(0, 0, 0, 0.45);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+  backdrop-filter: blur(4px);
 }
 
 .faro-title {
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   margin: 0;
   color: var(--gold);
-  letter-spacing: 0.05em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   font-weight: 800;
 }
 
-/* Layout */
+/* ── Two-column layout ── */
 .faro-layout {
   display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 16px;
-  padding: 16px 24px;
+  grid-template-columns: 230px 1fr;
+  gap: 20px;
+  padding: 20px 28px;
   flex: 1;
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
   width: 100%;
+  align-items: start;
 }
 
-@media (max-width: 768px) {
-  .faro-layout {
-    grid-template-columns: 1fr;
-    padding: 12px;
-  }
+/* ── Meta panel (left) ── */
+.faro-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  position: sticky;
+  top: 20px;
 }
 
-.faro-sidebar {
-  min-width: 0;
+.meta-section {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 12px;
+  padding: 14px;
 }
 
+.meta-heading {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 10px;
+  opacity: 0.85;
+}
+
+.meta-controls {
+  padding: 12px;
+}
+
+/* ── Main play area (right) ── */
 .faro-main {
   display: flex;
   flex-direction: column;
@@ -69,173 +94,235 @@ body {
   min-width: 0;
 }
 
-/* Table section */
-.faro-table {
-  background: linear-gradient(145deg, #0a4d26, #0d5c2e);
-  border-radius: 12px;
-  padding: 20px;
-  border: 2px solid rgba(201, 168, 76, 0.3);
+/* ── Deal display ── */
+.faro-deal {
+  background: rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(201, 168, 76, 0.18);
+  border-radius: 14px;
+  padding: 18px 22px 14px;
 }
 
-.faro-cards-display {
+.deal-cards {
   display: flex;
-  justify-content: center;
-  gap: 24px;
+  align-items: flex-end;
+  gap: 18px;
   flex-wrap: wrap;
-  margin-bottom: 16px;
 }
 
-.faro-card-slot {
-  text-align: center;
+.deal-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
 }
 
-.faro-card-label {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--gold);
-  margin-bottom: 8px;
+.deal-label {
+  font-size: 0.68rem;
   font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
 }
 
-.faro-card {
+.loss-label { color: #f87171; }
+.win-label  { color: #4ade80; }
+.soda-label { color: rgba(201, 168, 76, 0.6); }
+
+.deal-card {
   display: inline-block;
-  transition: transform 0.3s ease;
+  border-radius: 6px;
+  transition: filter 0.3s;
 }
 
-.faro-card-placeholder {
-  width: 72px;
-  height: 100px;
-  border: 2px dashed rgba(255, 255, 255, 0.2);
+.deal-card-winner {
+  filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.5));
+}
+
+.deal-card-loser {
+  filter: drop-shadow(0 0 10px rgba(248, 113, 113, 0.5));
+}
+
+.deal-card-empty {
+  width: 62px;
+  height: 88px;
+  border: 2px dashed rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  color: rgba(255, 255, 255, 0.15);
+  font-size: 1.4rem;
+  color: rgba(255, 255, 255, 0.1);
 }
 
-.faro-card-loser {
-  filter: drop-shadow(0 0 8px rgba(248, 113, 113, 0.4));
+.deal-divider {
+  width: 1px;
+  height: 88px;
+  background: rgba(201, 168, 76, 0.15);
+  margin: 0 4px;
+  align-self: flex-end;
 }
 
-.faro-card-winner {
-  filter: drop-shadow(0 0 8px rgba(74, 222, 128, 0.4));
-}
-
-.faro-card-soda {
-  opacity: 0.7;
-}
-
-.faro-info-bar {
+.deal-soda {
   display: flex;
-  justify-content: center;
-  gap: 20px;
-  font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.7);
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-left: 6px;
+  opacity: 0.65;
 }
 
-.faro-hock-badge {
-  background: var(--copper);
-  color: #1a0e00;
-  padding: 2px 10px;
-  border-radius: 10px;
-  font-weight: 700;
-  font-size: 0.75rem;
-  text-transform: uppercase;
+.deal-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 14px;
+  flex-wrap: wrap;
 }
 
-.faro-message {
-  text-align: center;
-  margin-top: 12px;
-  padding: 8px 16px;
-  background: rgba(0, 0, 0, 0.25);
-  border-radius: 6px;
-  font-size: 0.9rem;
+.deal-stat {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.deal-stat strong {
   color: var(--text-cream);
 }
 
-/* Betting controls */
-.faro-betting-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 16px;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.2);
+.deal-divider-v {
+  width: 1px;
+  height: 14px;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.deck-bar {
+  flex: 1;
+  min-width: 60px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.deck-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #c9a84c, #dbb85c);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+.hock-badge {
+  background: var(--copper);
+  color: #1a0800;
+  font-size: 0.68rem;
+  font-weight: 800;
+  padding: 2px 8px;
   border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.faro-chips {
+.deal-message {
+  margin-top: 10px;
+  padding: 7px 14px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: var(--text-cream);
+  border-left: 2px solid rgba(201, 168, 76, 0.35);
+}
+
+/* ── Action bar ── */
+.faro-action-bar {
   display: flex;
-  gap: 8px;
-}
-
-.faro-chip-selected {
-  box-shadow: 0 0 0 3px var(--gold), 0 4px 12px rgba(201, 168, 76, 0.4) !important;
-  transform: scale(1.1);
-}
-
-.faro-bet-actions {
-  display: flex;
-  gap: 8px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 12px;
   flex-wrap: wrap;
 }
 
-/* Buttons */
+.action-chips {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-right {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* Active chip ring */
+.chip-active {
+  box-shadow: 0 0 0 3px var(--gold), 0 4px 14px rgba(201, 168, 76, 0.35) !important;
+  transform: scale(1.1) !important;
+}
+
+/* ── Buttons ── */
 .faro-btn {
-  padding: 10px 18px;
+  padding: 9px 18px;
   border-radius: 8px;
-  border: 1px solid rgba(201, 168, 76, 0.4);
-  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  background: rgba(0, 0, 0, 0.35);
   color: var(--text-cream);
   font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  min-height: 44px;
+  font-size: 0.88rem;
+  transition: background 0.14s, border-color 0.14s, transform 0.1s;
+  min-height: 40px;
+  white-space: nowrap;
 }
 
 .faro-btn:hover {
-  background: rgba(201, 168, 76, 0.2);
+  background: rgba(201, 168, 76, 0.18);
   border-color: var(--gold);
 }
 
-.faro-btn:active {
-  transform: scale(0.97);
+.faro-btn:active { transform: scale(0.97); }
+
+.faro-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
-.faro-btn-copper {
-  border-color: rgba(184, 115, 51, 0.5);
+.btn-copper {
+  border-color: rgba(184, 115, 51, 0.4);
 }
 
-.faro-btn-copper-active {
-  background: linear-gradient(135deg, #b87333, #8b5a2b) !important;
-  color: #fff !important;
+.btn-copper-on {
+  background: linear-gradient(135deg, #b87333, #7c4a1a) !important;
   border-color: #d4935a !important;
+  color: #fff !important;
 }
 
-.faro-btn-place {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.6), rgba(29, 78, 216, 0.6));
-  border-color: rgba(96, 165, 250, 0.4);
+.btn-deal {
+  background: linear-gradient(135deg, rgba(21, 128, 61, 0.7), rgba(14, 100, 48, 0.7));
+  border-color: rgba(74, 222, 128, 0.35);
+  font-size: 0.95rem;
+  padding: 9px 28px;
+  font-weight: 700;
 }
 
-.faro-btn-place:hover {
-  background: linear-gradient(135deg, rgba(37, 99, 235, 0.8), rgba(29, 78, 216, 0.8));
+.btn-deal:hover {
+  background: linear-gradient(135deg, rgba(21, 128, 61, 0.9), rgba(14, 100, 48, 0.9));
+  border-color: rgba(74, 222, 128, 0.6);
 }
 
-.faro-btn-deal {
-  background: linear-gradient(135deg, rgba(22, 163, 74, 0.6), rgba(21, 128, 61, 0.6));
-  border-color: rgba(74, 222, 128, 0.4);
-  font-size: 1rem;
-  padding: 10px 28px;
+.btn-undo {
+  border-color: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.55);
 }
 
-.faro-btn-deal:hover {
-  background: linear-gradient(135deg, rgba(22, 163, 74, 0.8), rgba(21, 128, 61, 0.8));
+.btn-undo:hover:not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--text-cream);
+  background: rgba(255, 255, 255, 0.06);
 }
 
-/* Loading state */
+/* ── Loading screen ── */
 .faro-loading {
   display: flex;
   flex-direction: column;
@@ -246,10 +333,7 @@ body {
   gap: 16px;
 }
 
-.faro-loading h1 {
-  color: var(--gold);
-  font-size: 2rem;
-}
+.faro-loading h1 { color: var(--gold); font-size: 2rem; }
 
 .faro-loading button {
   padding: 12px 24px;
@@ -261,42 +345,46 @@ body {
   cursor: pointer;
 }
 
-/* General button reset for components */
-button {
-  font-family: inherit;
+/* ── Focus styles ── */
+:where(:focus-visible) {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
 }
 
-/* Utility */
-.container {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 24px;
-}
-
-/* Mobile: stack everything */
-@media (max-width: 768px) {
-  .faro-header {
-    padding: 12px 16px;
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .faro-layout {
+    grid-template-columns: 1fr;
+    padding: 14px 16px;
   }
 
-  .faro-title {
-    font-size: 1.2rem;
-  }
-
-  .faro-cards-display {
+  .faro-meta {
+    position: static;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
 
-  .faro-betting-controls {
+  .meta-controls {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .faro-header { padding: 10px 16px; }
+  .faro-title  { font-size: 1.1rem; }
+
+  .faro-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .deal-cards { gap: 12px; }
+
+  .faro-action-bar {
     flex-direction: column;
     align-items: stretch;
   }
 
-  .faro-chips {
-    justify-content: center;
-  }
-
-  .faro-bet-actions {
-    justify-content: center;
-  }
+  .action-chips { justify-content: center; }
+  .action-right { justify-content: center; }
 }

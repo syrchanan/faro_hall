@@ -33,7 +33,7 @@ describe('game utilities', () => {
 
   test('placeBet deducts bankroll and records bet', () => {
     const g = newGame('seed-bet', players);
-    const after = placeBet(g, { playerId: 'p1', rank: 5, amount: 10 });
+    const after = placeBet(g, { playerId: 'p1', ranks: [5], amount: 10 });
     expect(after.players[0].bankroll).toBe(90);
     expect(after.bets.length).toBe(1);
     expect(after.bets[0].amount).toBe(10);
@@ -41,9 +41,9 @@ describe('game utilities', () => {
 
   test('placeBet throws on unknown player or insufficient funds', () => {
     const g = newGame('seed-bet2', players);
-    expect(() => placeBet(g, { playerId: 'unknown', rank: 2, amount: 5 } as any)).toThrow();
-    expect(() => placeBet(g, { playerId: 'p1', rank: 2, amount: 1000 })).toThrow();
-    expect(() => placeBet(g, { playerId: 'p1', rank: 2, amount: 0 })).toThrow();
+    expect(() => placeBet(g, { playerId: 'unknown', ranks: [2], amount: 5 } as any)).toThrow();
+    expect(() => placeBet(g, { playerId: 'p1', ranks: [2], amount: 1000 })).toThrow();
+    expect(() => placeBet(g, { playerId: 'p1', ranks: [2], amount: 0 })).toThrow();
   });
 
   test('resolveTurn pays winners and clears bets (standard win)', () => {
@@ -56,7 +56,7 @@ describe('game utilities', () => {
       players: [{ id: 'p1', name: 'Alice', bankroll: 100 }]
     };
     // place a bet on the winner (rank 3)
-    const afterBet = placeBet(state as any, { playerId: 'p1', rank: 3, amount: 10 });
+    const afterBet = placeBet(state as any, { playerId: 'p1', ranks: [3], amount: 10 });
     // resolve turn
     const resolved = resolveTurn(afterBet);
     // paid: bankroll 100 -> 90 after bet -> +20 on win => 110
@@ -75,7 +75,7 @@ describe('game utilities', () => {
       players: [{ id: 'p1', name: 'Alice', bankroll: 100 }]
     };
     // place a coppered bet on the winner (rank 9) which should lose
-    const afterBet = placeBet(state as any, { playerId: 'p1', rank: 9, amount: 10, coppered: true });
+    const afterBet = placeBet(state as any, { playerId: 'p1', ranks: [9], amount: 10, coppered: true });
     const resolved = resolveTurn(afterBet);
     // coppered inversion: should lose => bankroll stays at 90
     expect(resolved.state.players.find(p => p.id === 'p1')!.bankroll).toBe(90);
@@ -88,7 +88,7 @@ describe('game utilities', () => {
       bets: [],
       players: [{ id: 'p1', name: 'Alice', bankroll: 100 }]
     };
-    const afterBet2 = placeBet(state2 as any, { playerId: 'p1', rank: 7, amount: 10, coppered: true });
+    const afterBet2 = placeBet(state2 as any, { playerId: 'p1', ranks: [7], amount: 10, coppered: true });
     const resolved2 = resolveTurn(afterBet2);
     // coppered on loser flips to win => bankroll 110
     expect(resolved2.state.players.find(p => p.id === 'p1')!.bankroll).toBe(110);
@@ -102,7 +102,7 @@ describe('game utilities', () => {
       bets: [],
       players: [{ id: 'p1', name: 'Alice', bankroll: 100 }]
     } as any;
-    const afterBet = placeBet(state, { playerId: 'p1', rank: 6, amount: 10 });
+    const afterBet = placeBet(state, { playerId: 'p1', ranks: [6], amount: 10 });
     const resolved = resolveTurn(afterBet);
     // split: house takes half. bankroll 100 -> 90 after bet -> +5 (half of 10) = 95
     expect(resolved.state.players.find(p => p.id === 'p1')!.bankroll).toBe(95);
@@ -156,14 +156,14 @@ describe('game utilities', () => {
     expect(() => deserializeGameState(badSuit as any)).toThrow();
   });
 
-  test('placeBet validates rank and amount at runtime', () => {
+  test('placeBet validates ranks and amount at runtime', () => {
     const g = newGame('seed-validate', players);
-    // invalid rank
-    expect(() => placeBet(g, { playerId: 'p1', rank: 0 as any, amount: 5 })).toThrow();
-    expect(() => placeBet(g, { playerId: 'p1', rank: 14 as any, amount: 5 })).toThrow();
+    // invalid rank in array
+    expect(() => placeBet(g, { playerId: 'p1', ranks: [0] as any, amount: 5 })).toThrow();
+    expect(() => placeBet(g, { playerId: 'p1', ranks: [14] as any, amount: 5 })).toThrow();
     // invalid amount
-    expect(() => placeBet(g, { playerId: 'p1', rank: 3, amount: 0 })).toThrow();
-    expect(() => placeBet(g, { playerId: 'p1', rank: 3, amount: -10 })).toThrow();
+    expect(() => placeBet(g, { playerId: 'p1', ranks: [3], amount: 0 })).toThrow();
+    expect(() => placeBet(g, { playerId: 'p1', ranks: [3], amount: -10 })).toThrow();
   });
 
   test('multiple players and bets resolve correctly and immutably', () => {
@@ -178,8 +178,8 @@ describe('game utilities', () => {
       ]
     };
 
-    const after1 = placeBet(state as any, { playerId: 'p1', rank: 3, amount: 10 });
-    const after2 = placeBet(after1, { playerId: 'p2', rank: 2, amount: 5, coppered: true });
+    const after1 = placeBet(state as any, { playerId: 'p1', ranks: [3], amount: 10 });
+    const after2 = placeBet(after1, { playerId: 'p2', ranks: [2], amount: 5, coppered: true });
 
     // ensure original state not mutated
     expect(state.players[0].bankroll).toBe(100);
@@ -202,8 +202,8 @@ describe('game utilities', () => {
       bets: [],
       players: [ { id: 'p1', name: 'Alice', bankroll: 100 } ]
     };
-    const s1 = placeBet(state as any, { playerId: 'p1', rank: 9, amount: 10 }); // bankroll 90
-    const s2 = placeBet(s1, { playerId: 'p1', rank: 8, amount: 5 }); // bankroll 85
+    const s1 = placeBet(state as any, { playerId: 'p1', ranks: [9], amount: 10 }); // bankroll 90
+    const s2 = placeBet(s1, { playerId: 'p1', ranks: [8], amount: 5 }); // bankroll 85
     const resolved = resolveTurn(s2);
     // winner is rank 9, loser 8 -> bet on 9 wins (10 -> +20), bet on 8 loses (5 lost)
     // final bankroll 85 + 20 = 105
@@ -212,16 +212,42 @@ describe('game utilities', () => {
 
   test('edge cases: unknown player id on placeBet', () => {
     const g = newGame('edge', players);
-    expect(() => placeBet(g, { playerId: 'unknown', rank: 3, amount: 5 } as any)).toThrow();
+    expect(() => placeBet(g, { playerId: 'unknown', ranks: [3], amount: 5 } as any)).toThrow();
+  });
+
+  test('multi-rank split bet: one rank wins and one loses in same turn', () => {
+    const state = {
+      seed: 'split-multi',
+      deck: [ { rank: 9 as any, suit: 'hearts' }, { rank: 8 as any, suit: 'clubs' } ],
+      burnt: [],
+      bets: [],
+      players: [{ id: 'p1', name: 'Alice', bankroll: 100 }]
+    } as any;
+    // bet on 9-8 split; loser=9, winner=8 => both ranks hit => split
+    const afterBet = placeBet(state, { playerId: 'p1', ranks: [9, 8], amount: 10 });
+    const resolved = resolveTurn(afterBet);
+    // split: 100 -> 90 after bet -> +5 (half stake back) = 95
+    expect(resolved.state.players.find(p => p.id === 'p1')!.bankroll).toBe(95);
+  });
+
+  test('multi-rank bet wins when one covered rank is the winner', () => {
+    const state = {
+      seed: 'multi-win',
+      deck: [ { rank: 2 as any, suit: 'hearts' }, { rank: 9 as any, suit: 'clubs' } ],
+      burnt: [],
+      bets: [],
+      players: [{ id: 'p1', name: 'Alice', bankroll: 100 }]
+    } as any;
+    // bet on 9-8 corner; winner=9, loser=2 (not in bet) => win
+    const afterBet = placeBet(state, { playerId: 'p1', ranks: [9, 8], amount: 10 });
+    const resolved = resolveTurn(afterBet);
+    // win: 100 -> 90 -> +20 = 110
+    expect(resolved.state.players.find(p => p.id === 'p1')!.bankroll).toBe(110);
   });
 
 });
 
 // Additional targeted tests to cover previously uncovered branches
-// These tests simulate normal usage by using placeBet so that stakes are deducted
-// before resolveTurn is called. They then inject malformed bets to exercise
-// the edge branches inside resolveTurn (unknown player skip; coppered fallback).
-
 test('resolveTurn ignores bets with unknown players (skips pIdx === -1)', () => {
   const state: any = {
     seed: 'unknown-bet',
@@ -230,16 +256,9 @@ test('resolveTurn ignores bets with unknown players (skips pIdx === -1)', () => 
     bets: [],
     players: [{ id: 'p1', name: 'Alice', bankroll: 100 }]
   };
-  // place a legitimate bet using placeBet (deducts stake)
-  const afterBet = placeBet(state, { playerId: 'p1', rank: 3, amount: 5 }); // bankroll becomes 95
-  // inject a malformed bet referencing an unknown player (e.g., from external state)
-  const corrupted: any = { ...afterBet, bets: afterBet.bets.concat([{ playerId: 'nope', rank: 3, amount: 10 }]) };
-  // Debug
-  // console.log('afterBet.players', JSON.stringify(afterBet.players));
-  // console.log('corrupted.bets', JSON.stringify(corrupted.bets));
-  // Resolve should skip the unknown bet and correctly resolve the real one
+  const afterBet = placeBet(state, { playerId: 'p1', ranks: [3], amount: 5 }); // bankroll becomes 95
+  const corrupted: any = { ...afterBet, bets: afterBet.bets.concat([{ playerId: 'nope', ranks: [3], amount: 10 }]) };
   const resolved = resolveTurn(corrupted);
-  // console.log('resolved.players', JSON.stringify(resolved.state.players));
   // bankroll: 95 (after stake) + 10 winnings = 105
   expect(resolved.state.players.find((p: any) => p.id === 'p1')!.bankroll).toBe(105);
 });
@@ -252,15 +271,9 @@ test('resolveTurn treats non-boolean coppered as false (fallback branch)', () =>
     bets: [],
     players: [{ id: 'p1', name: 'Alice', bankroll: 100 }]
   };
-  // place bet normally (deduct stake)
-  const afterBet = placeBet(state, { playerId: 'p1', rank: 9, amount: 10 }); // bankroll 90
-  // mutate the bet to have a malformed coppered value (string) to exercise fallback
+  const afterBet = placeBet(state, { playerId: 'p1', ranks: [9], amount: 10 }); // bankroll 90
   const tampered: any = { ...afterBet, bets: [{ ...afterBet.bets[0], coppered: 'yes' as any }] };
-  // Debug
-  // console.log('afterBet.players', JSON.stringify(afterBet.players));
-  // console.log('tampered.bets', JSON.stringify(tampered.bets));
   const resolved = resolveTurn(tampered);
-  // console.log('resolved.players', JSON.stringify(resolved.state.players));
   // coppered malformed => treated as false => win -> bankroll 90 + 20 = 110
   expect(resolved.state.players.find((p: any) => p.id === 'p1')!.bankroll).toBe(110);
 });

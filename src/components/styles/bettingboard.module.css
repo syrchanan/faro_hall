@@ -1,93 +1,202 @@
 .board {
-  background: linear-gradient(145deg, #0a4d26, #0d5c2e);
-  border-radius: 10px;
-  padding: 16px;
+  background: linear-gradient(160deg, #0a4a24 0%, #0c5a2c 50%, #0a4a24 100%);
+  border-radius: 14px;
+  padding: 18px 20px 10px;
+  border: 2px solid rgba(201, 168, 76, 0.25);
+  box-shadow: inset 0 2px 12px rgba(0,0,0,0.3), 0 4px 24px rgba(0,0,0,0.4);
 }
 
-.heading {
-  margin: 0 0 12px;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #c9a84c;
-}
-
+/* 13 columns: repeat(6, card gap) + card-for-7
+   card columns = 1fr (min 52px), gap columns = 22px
+   grid-template-columns: repeat(6, 1fr 22px) 1fr  */
 .grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 6px;
+  grid-template-columns: repeat(6, minmax(52px, 1fr) 22px) minmax(52px, 1fr);
+  grid-template-rows: minmax(72px, 1fr) 22px minmax(72px, 1fr);
+  gap: 3px;
 }
 
-@media (max-width: 600px) {
-  .grid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.cell {
+/* ── Card cells ── */
+.card {
   position: relative;
-  background: rgba(0, 0, 0, 0.25);
-  border: 2px solid rgba(201, 168, 76, 0.25);
+  background: rgba(0, 0, 0, 0.28);
+  border: 1.5px solid rgba(201, 168, 76, 0.3);
   border-radius: 8px;
-  padding: 10px 4px;
-  text-align: center;
   cursor: pointer;
-  transition: all 0.15s ease;
-  min-height: 60px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 2px;
+  transition: background 0.12s, border-color 0.12s, box-shadow 0.12s;
+  padding: 6px 4px;
+  user-select: none;
 }
 
-.cell:hover {
-  border-color: rgba(201, 168, 76, 0.6);
-  background: rgba(201, 168, 76, 0.1);
+.card:hover {
+  border-color: rgba(201, 168, 76, 0.75);
+  background: rgba(201, 168, 76, 0.12);
 }
 
-.selected {
-  border-color: #c9a84c;
-  background: rgba(201, 168, 76, 0.2);
-  box-shadow: 0 0 10px rgba(201, 168, 76, 0.3);
+.cardHovered {
+  border-color: rgba(201, 168, 76, 0.65);
+  background: rgba(201, 168, 76, 0.09);
+  box-shadow: 0 0 10px rgba(201, 168, 76, 0.18);
 }
 
-.rankLabel {
-  font-size: 1.1rem;
-  font-weight: 700;
+.cardSeven {
+  /* spans all 3 rows — taller, close the horseshoe */
+  justify-content: center;
+  gap: 6px;
+  border-left: 2px solid rgba(201, 168, 76, 0.5);
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 0 10px 10px 0;
+}
+
+.cardRank {
+  font-size: 1.45rem;
+  font-weight: 800;
   color: #fff;
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 
-.betIndicator {
-  margin-top: 4px;
-  font-size: 0.7rem;
-  font-weight: 700;
-  color: #8ec88e;
+.cardSuit {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1;
 }
 
-.copperIndicator {
-  color: #d4935a;
+.cardWinner {
+  border-color: #4ade80 !important;
+  background: rgba(74, 222, 128, 0.14) !important;
+  box-shadow: 0 0 18px rgba(74, 222, 128, 0.45) !important;
+  animation: winPulse 0.55s ease;
 }
 
-.winHighlight {
-  animation: winPulse 0.6s ease;
-  border-color: #4ade80;
-  box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
-}
-
-.loseHighlight {
-  animation: losePulse 0.6s ease;
-  border-color: #f87171;
-  box-shadow: 0 0 12px rgba(248, 113, 113, 0.4);
+.cardLoser {
+  border-color: #f87171 !important;
+  background: rgba(248, 113, 113, 0.14) !important;
+  box-shadow: 0 0 18px rgba(248, 113, 113, 0.45) !important;
+  animation: losePulse 0.55s ease;
 }
 
 @keyframes winPulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.06); }
   100% { transform: scale(1); }
 }
 
 @keyframes losePulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(0.97); }
+  0%   { transform: scale(1); }
+  40%  { transform: scale(0.95); }
   100% { transform: scale(1); }
+}
+
+/* ── Bet zone cells ── */
+.zone {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.1s;
+  padding: 0;
+  position: relative;
+}
+
+.zone:hover {
+  background: rgba(201, 168, 76, 0.18);
+}
+
+.zoneHasBet {
+  background: rgba(201, 168, 76, 0.08);
+}
+
+.zoneDot {
+  display: block;
+  width: 5px;
+  height: 5px;
+  background: rgba(201, 168, 76, 0.28);
+  border-radius: 50%;
+  transition: background 0.1s, transform 0.1s;
+  pointer-events: none;
+}
+
+.zone:hover .zoneDot {
+  background: rgba(201, 168, 76, 0.75);
+  transform: scale(1.4);
+}
+
+/* corner zone: cross-shaped dot */
+.zoneCorner .zoneDot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+}
+
+/* ── Bet chip indicators ── */
+.chip {
+  position: absolute;
+  bottom: 3px;
+  right: 3px;
+  background: #1d4ed8;
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 8px;
+  line-height: 1.5;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+
+.chipSmall {
+  position: relative;
+  bottom: auto;
+  right: auto;
+  font-size: 0.58rem;
+}
+
+.chipCopper {
+  background: #b87333;
+}
+
+/* ── Hover bar ── */
+.hoverBar {
+  min-height: 1.4em;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.hoverLabel {
+  font-size: 0.75rem;
+  color: rgba(201, 168, 76, 0.7);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+  .grid {
+    grid-template-columns: repeat(6, minmax(36px, 1fr) 14px) minmax(36px, 1fr);
+    grid-template-rows: minmax(54px, 1fr) 14px minmax(54px, 1fr);
+    gap: 2px;
+  }
+
+  .cardRank {
+    font-size: 1.05rem;
+  }
+
+  .cardSuit {
+    font-size: 0.65rem;
+  }
+
+  .board {
+    padding: 12px 12px 8px;
+  }
 }

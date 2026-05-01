@@ -7,7 +7,7 @@ export const CardSchema = z.object({
 
 export const BetSchema = z.object({
   playerId: z.string().min(1),
-  rank: z.number().int().min(1).max(13),
+  ranks: z.array(z.number().int().min(1).max(13)).min(1).max(4),
   coppered: z.boolean().optional().default(false),
   amount: z.number().int().min(1).max(100_000)
 });

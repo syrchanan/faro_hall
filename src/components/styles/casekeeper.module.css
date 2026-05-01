@@ -1,72 +1,97 @@
 .panel {
-  background: linear-gradient(145deg, #0a4d26, #0d5c2e);
-  border-radius: 10px;
-  padding: 16px;
   color: #e8dcc8;
 }
 
-.heading {
-  margin: 0 0 12px;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: #c9a84c;
+/* Single-column list of rank rows */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.grid {
-  display: grid;
+.row {
+  display: flex;
+  align-items: center;
   gap: 8px;
-}
-
-.cell {
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(201, 168, 76, 0.3);
+  padding: 5px 8px;
   border-radius: 6px;
-  padding: 8px;
-  text-align: center;
-  min-width: 0;
+  background: rgba(0, 0, 0, 0.18);
+  min-height: 32px;
+  transition: background 0.1s;
 }
 
-.rank {
-  font-size: 0.75rem;
+.row:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+/* Rank label: A 2 3 … 10 J Q K */
+.rankLabel {
+  width: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
   color: #c9a84c;
-  font-weight: 700;
-  margin-bottom: 4px;
+  text-align: right;
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
 }
 
-.count {
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: #fff;
-  margin-bottom: 6px;
-}
-
-.markers {
+/* 4 pip dots */
+.pips {
   display: flex;
   gap: 4px;
-  justify-content: center;
+  flex: 1;
+  align-items: center;
 }
 
-.markers button {
-  width: 24px;
-  height: 24px;
+.pipFilled,
+.pipEmpty {
+  display: block;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  border: 1px solid rgba(201, 168, 76, 0.4);
+  flex-shrink: 0;
+}
+
+.pipFilled {
+  background: #c9a84c;
+  box-shadow: 0 0 4px rgba(201, 168, 76, 0.4);
+}
+
+.pipEmpty {
+  background: transparent;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+}
+
+/* H / S toggle buttons */
+.markerBtns {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.marker,
+.markerOn {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid rgba(201, 168, 76, 0.35);
   background: rgba(0, 0, 0, 0.3);
-  color: #999;
-  font-size: 0.625rem;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.6rem;
   font-weight: 700;
   cursor: pointer;
   padding: 0;
-  transition: all 0.15s ease;
+  line-height: 1;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
 }
 
-.markers button:hover {
-  border-color: #c9a84c;
+.marker:hover {
+  border-color: rgba(201, 168, 76, 0.7);
+  color: #c9a84c;
 }
 
-.on {
-  background: linear-gradient(135deg, #c9a84c, #a67c2e) !important;
-  color: #1a0e00 !important;
-  border-color: #dbb85c !important;
+.markerOn {
+  background: linear-gradient(135deg, #c9a84c, #a67c2e);
+  color: #1a0e00;
+  border-color: #dbb85c;
 }
