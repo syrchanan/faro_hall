@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import type { NextPage } from 'next';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import {
   newGame,
@@ -136,7 +137,10 @@ const Home: NextPage = () => {
     <div className="faro-app">
       <header className="faro-header">
         <h1 className="faro-title">Faro Hall</h1>
-        <SeedShare seed={seed} onImport={handleLoadSeed} />
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <Link href="/rules" className="faro-btn" aria-label="View Rules">Rules</Link>
+          <SeedShare seed={seed} onImport={handleLoadSeed} />
+        </div>
       </header>
 
       <div className="faro-layout">

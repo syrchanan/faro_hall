@@ -74,8 +74,6 @@ export function resolveTurn(state: GameState): { state: GameState; winnerCard?: 
     return { state, isHock: state.deck.length === 1 };
   }
 
-  if (state.deck.length < 2) return { state };
-
   const [loser, ...rest1] = state.deck;
   const [winner, ...rest2] = rest1;
 
@@ -85,32 +83,57 @@ export function resolveTurn(state: GameState): { state: GameState; winnerCard?: 
   casekeep = recordDraw(casekeep, winner);
 
   const playersCopy = state.players.map(p => ({ ...p }));
+  const unresolvedBets: Bet[] = [];
+
+  // Classify bets: stays (unresolved), splits, losses, wins.
+  // Two-pass order: losses (and splits) first, then wins.
+  const lossBets: Bet[] = [];
+  const winBets: Bet[] = [];
 
   for (const b of state.bets) {
+    const wouldWin = b.ranks.some(r => r === winner.rank);
+    const wouldLose = b.ranks.some(r => r === loser.rank);
+
+    if (!wouldWin && !wouldLose) {
+      // Bet touches neither card this turn — keep it on the table untouched
+      unresolvedBets.push(b);
+      continue;
+    }
+
+    const coppered = typeof b.coppered === 'boolean' ? b.coppered : false;
+
+    if (wouldWin && wouldLose) {
+      // Split — both ranks appeared; house takes half
+      lossBets.push(b);
+      continue;
+    }
+
+    const finalWin = wouldWin !== coppered; // XOR: copper inverts
+    if (finalWin) {
+      winBets.push(b);
+    } else {
+      lossBets.push(b);
+    }
+  }
+
+  // Pass 1: losses and splits (stake already deducted on placeBet — nothing extra to do for losses)
+  for (const b of lossBets) {
     const pIdx = playersCopy.findIndex(p => p.id === b.playerId);
     if (pIdx === -1) continue;
     const wouldWin = b.ranks.some(r => r === winner.rank);
     const wouldLose = b.ranks.some(r => r === loser.rank);
-
     if (wouldWin && wouldLose) {
-      // Split — both cards same rank — return half stake (house takes half)
+      // Split: return half stake
       playersCopy[pIdx].bankroll += Math.floor(b.amount / 2);
-      continue;
     }
-    if (!wouldWin && !wouldLose) {
-      // Bet stays for next turn — return stake
-      playersCopy[pIdx].bankroll += b.amount;
-      continue;
-    }
+    // Pure loss: stake already gone
+  }
 
-    let finalWin = wouldWin;
-    const coppered = (typeof b.coppered === 'boolean') ? b.coppered : false;
-    if (coppered) finalWin = !finalWin;
-
-    if (finalWin) {
-      playersCopy[pIdx].bankroll += b.amount * 2;
-    }
-    // else: lost, stake already deducted
+  // Pass 2: wins
+  for (const b of winBets) {
+    const pIdx = playersCopy.findIndex(p => p.id === b.playerId);
+    if (pIdx === -1) continue;
+    playersCopy[pIdx].bankroll += b.amount * 2;
   }
 
   const isHock = rest2.length === 1;
@@ -118,7 +141,7 @@ export function resolveTurn(state: GameState): { state: GameState; winnerCard?: 
     ...state,
     deck: rest2,
     burnt,
-    bets: [],
+    bets: unresolvedBets,
     players: playersCopy,
     casekeep,
     turn: (state.turn || 0) + 1,

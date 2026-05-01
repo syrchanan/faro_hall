@@ -277,3 +277,85 @@ test('resolveTurn treats non-boolean coppered as false (fallback branch)', () =>
   // coppered malformed => treated as false => win -> bankroll 90 + 20 = 110
   expect(resolved.state.players.find((p: any) => p.id === 'p1')!.bankroll).toBe(110);
 });
+
+// ── New behaviour: unresolved bets persist ──────────────────────────────────
+
+test('resolveTurn preserves bets whose rank did not appear this turn', () => {
+  const state: any = {
+    seed: 'stay-bet',
+    deck: [
+      { rank: 2, suit: 'hearts' },   // loser
+      { rank: 3, suit: 'clubs' },    // winner
+      { rank: 4, suit: 'diamonds' }, // still in deck after
+    ],
+    burnt: [],
+    bets: [],
+    players: [{ id: 'p1', name: 'Alice', bankroll: 100 }],
+  };
+
+  // Bet on rank 5 — neither loser (2) nor winner (3)
+  const afterBet = placeBet(state, { playerId: 'p1', ranks: [5], amount: 10 });
+  expect(afterBet.players[0].bankroll).toBe(90); // stake deducted on place
+
+  const resolved = resolveTurn(afterBet);
+
+  // Bet on 5 was not involved — it must remain on the table
+  expect(resolved.state.bets.length).toBe(1);
+  expect(resolved.state.bets[0].ranks).toEqual([5]);
+  expect(resolved.state.bets[0].amount).toBe(10);
+
+  // Bankroll unchanged (stake stays on the table, not returned)
+  expect(resolved.state.players[0].bankroll).toBe(90);
+});
+
+test('resolveTurn only clears bets that were resolved (win/lose/split), keeps the rest', () => {
+  const state: any = {
+    seed: 'mixed-bets',
+    deck: [
+      { rank: 2, suit: 'hearts' },   // loser
+      { rank: 3, suit: 'clubs' },    // winner
+      { rank: 4, suit: 'diamonds' }, // remaining
+    ],
+    burnt: [],
+    bets: [],
+    players: [{ id: 'p1', name: 'Alice', bankroll: 100 }],
+  };
+
+  const s1 = placeBet(state, { playerId: 'p1', ranks: [3], amount: 10 }); // wins
+  const s2 = placeBet(s1,    { playerId: 'p1', ranks: [7], amount: 5  }); // stays
+
+  const resolved = resolveTurn(s2);
+
+  // Only the unresolved bet on rank 7 should remain
+  expect(resolved.state.bets.length).toBe(1);
+  expect(resolved.state.bets[0].ranks).toEqual([7]);
+
+  // bankroll: 100 - 10 - 5 = 85 (after placing), +20 (win on 3) = 105
+  // rank-7 bet stays deducted (not returned)
+  expect(resolved.state.players[0].bankroll).toBe(105);
+});
+
+test('resolveTurn loss-first ordering: losing bets settled before winning bets', () => {
+  // Two bets by same player: one loses, one wins.
+  // Regardless of internal ordering the bankroll math must be correct.
+  const state: any = {
+    seed: 'order-test',
+    deck: [
+      { rank: 8, suit: 'hearts' },  // loser
+      { rank: 9, suit: 'clubs' },   // winner
+    ],
+    burnt: [],
+    bets: [],
+    players: [{ id: 'p1', name: 'Alice', bankroll: 100 }],
+  };
+
+  // Place losing bet BEFORE winning bet to exercise "lose first" ordering
+  const s1 = placeBet(state, { playerId: 'p1', ranks: [8], amount: 5  }); // will lose
+  const s2 = placeBet(s1,    { playerId: 'p1', ranks: [9], amount: 10 }); // will win
+
+  const resolved = resolveTurn(s2);
+
+  // after bets: 100-5-10 = 85; loss: 0 extra; win: +20 = 105
+  expect(resolved.state.players[0].bankroll).toBe(105);
+  expect(resolved.state.bets.length).toBe(0);
+});

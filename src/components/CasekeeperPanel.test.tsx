@@ -56,17 +56,17 @@ describe('CasekeeperPanel', () => {
     expect(kingEmpty.length).toBe(0);
   });
 
-  test('toggles hock and soda markers by rank number aria-label', () => {
+  test('toggles hock and soda markers by rank aria-label', () => {
     const { getByLabelText } = render(<CasekeeperPanel burnt={[]} />);
 
-    const hockBtn = getByLabelText('Toggle hock for rank 3') as HTMLButtonElement;
+    const hockBtn = getByLabelText('Mark 3 as Hock (last card)') as HTMLButtonElement;
     expect(hockBtn.getAttribute('aria-pressed')).toBe('false');
     fireEvent.click(hockBtn);
     expect(hockBtn.getAttribute('aria-pressed')).toBe('true');
     fireEvent.click(hockBtn);
     expect(hockBtn.getAttribute('aria-pressed')).toBe('false');
 
-    const sodaBtn = getByLabelText('Toggle soda for rank 5') as HTMLButtonElement;
+    const sodaBtn = getByLabelText('Mark 5 as Soda (first card)') as HTMLButtonElement;
     fireEvent.click(sodaBtn);
     expect(sodaBtn.getAttribute('aria-pressed')).toBe('true');
   });
@@ -76,7 +76,7 @@ describe('CasekeeperPanel', () => {
     const { getByLabelText } = render(
       <CasekeeperPanel burnt={[]} onToggleMarker={onToggle} />
     );
-    fireEvent.click(getByLabelText('Toggle hock for rank 7'));
+    fireEvent.click(getByLabelText('Mark 7 as Hock (last card)'));
     expect(onToggle).toHaveBeenCalledWith('7', 'hock');
   });
 });
