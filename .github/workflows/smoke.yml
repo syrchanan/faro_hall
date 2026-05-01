@@ -20,11 +20,9 @@ jobs:
           npm ci || npm install
       - name: Typecheck
         run: npx tsc --noEmit
-      - name: Build (Next) and export
+      - name: Build (Next)
         env:
           NODE_OPTIONS: --max_old_space_size=4096
-        run: |
-          npm run build
-          npm run export
+        run: npm run build
       - name: List exported files
         run: ls -la out || true
