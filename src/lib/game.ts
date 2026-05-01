@@ -5,24 +5,29 @@ import { CasekeepState, createCasekeep, recordDraw } from './casekeep';
 
 export type Bet = { playerId: string; ranks: Rank[]; coppered?: boolean; amount: number };
 
+export type Player = { id: string; name: string; bankroll: number; startingBankroll: number };
+
 export type GameState = {
   seed: string;
   deck: Card[];
   burnt: Card[];
   bets: Bet[];
-  players: { id: string; name: string; bankroll: number }[];
+  players: Player[];
   casekeep?: CasekeepState;
   sodaCard?: Card | null;
   turn?: number;
 };
 
-export function newGame(seed: string, players: { id: string; name: string; bankroll: number }[]): GameState {
+export function newGame(seed: string, players: { id: string; name: string; bankroll: number; startingBankroll?: number }[]): GameState {
   const s = seedFromString(seed);
   const rnd = mulberry32(s);
   const deck = makeDeck();
   const shuffled = shuffle(deck, rnd);
 
-  const playersCopy = players.map(p => ({ ...p }));
+  const playersCopy: Player[] = players.map(p => ({
+    ...p,
+    startingBankroll: p.startingBankroll ?? p.bankroll,
+  }));
   let casekeep = createCasekeep();
 
   // Soda: first card turned face-up at start, no action on it
@@ -85,8 +90,6 @@ export function resolveTurn(state: GameState): { state: GameState; winnerCard?: 
   const playersCopy = state.players.map(p => ({ ...p }));
   const unresolvedBets: Bet[] = [];
 
-  // Classify bets: stays (unresolved), splits, losses, wins.
-  // Two-pass order: losses (and splits) first, then wins.
   const lossBets: Bet[] = [];
   const winBets: Bet[] = [];
 
@@ -95,7 +98,6 @@ export function resolveTurn(state: GameState): { state: GameState; winnerCard?: 
     const wouldLose = b.ranks.some(r => r === loser.rank);
 
     if (!wouldWin && !wouldLose) {
-      // Bet touches neither card this turn — keep it on the table untouched
       unresolvedBets.push(b);
       continue;
     }
@@ -103,12 +105,11 @@ export function resolveTurn(state: GameState): { state: GameState; winnerCard?: 
     const coppered = typeof b.coppered === 'boolean' ? b.coppered : false;
 
     if (wouldWin && wouldLose) {
-      // Split — both ranks appeared; house takes half
       lossBets.push(b);
       continue;
     }
 
-    const finalWin = wouldWin !== coppered; // XOR: copper inverts
+    const finalWin = wouldWin !== coppered;
     if (finalWin) {
       winBets.push(b);
     } else {
@@ -116,17 +117,15 @@ export function resolveTurn(state: GameState): { state: GameState; winnerCard?: 
     }
   }
 
-  // Pass 1: losses and splits (stake already deducted on placeBet — nothing extra to do for losses)
+  // Pass 1: losses and splits
   for (const b of lossBets) {
     const pIdx = playersCopy.findIndex(p => p.id === b.playerId);
     if (pIdx === -1) continue;
     const wouldWin = b.ranks.some(r => r === winner.rank);
     const wouldLose = b.ranks.some(r => r === loser.rank);
     if (wouldWin && wouldLose) {
-      // Split: return half stake
       playersCopy[pIdx].bankroll += Math.floor(b.amount / 2);
     }
-    // Pure loss: stake already gone
   }
 
   // Pass 2: wins
@@ -149,19 +148,26 @@ export function resolveTurn(state: GameState): { state: GameState; winnerCard?: 
   return { state: newState, winnerCard: winner, loserCard: loser, isHock };
 }
 
-export function addPlayer(state: GameState, player: { id: string; name: string; bankroll: number }): GameState {
+export function addPlayer(state: GameState, player: { id: string; name: string; bankroll: number; startingBankroll?: number }): GameState {
   if (state.players.some(p => p.id === player.id)) throw new Error('Player already exists');
-  return { ...state, players: [...state.players, { ...player }] };
+  const newPlayer: Player = { ...player, startingBankroll: player.startingBankroll ?? player.bankroll };
+  return { ...state, players: [...state.players, newPlayer] };
 }
 
 export function removePlayer(state: GameState, playerId: string): GameState {
+  if (state.players.length <= 1) throw new Error('Cannot remove the last player');
   const filtered = state.players.filter(p => p.id !== playerId);
   if (filtered.length === state.players.length) throw new Error('Player not found');
-  // Also remove their bets, refunding amounts
-  const playerBets = state.bets.filter(b => b.playerId === playerId);
   const remainingBets = state.bets.filter(b => b.playerId !== playerId);
-  // No refund needed since bets are already deducted — just remove them
   return { ...state, players: filtered, bets: remainingBets };
+}
+
+export function renamePlayer(state: GameState, playerId: string, newName: string): GameState {
+  const idx = state.players.findIndex(p => p.id === playerId);
+  if (idx === -1) throw new Error('Player not found');
+  const playersCopy = state.players.map(p => ({ ...p }));
+  playersCopy[idx] = { ...playersCopy[idx], name: newName };
+  return { ...state, players: playersCopy };
 }
 
 export function serializeGameState(state: GameState): string {

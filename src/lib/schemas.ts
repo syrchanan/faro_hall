@@ -12,7 +12,12 @@ export const BetSchema = z.object({
   amount: z.number().int().min(1).max(100_000)
 });
 
-export const PlayerSchema = z.object({ id: z.string().min(1), name: z.string().min(1), bankroll: z.number().int().min(0).max(10_000_000) });
+export const PlayerSchema = z.object({
+  id: z.string().min(1),
+  name: z.string().min(1),
+  bankroll: z.number().int().min(0).max(10_000_000),
+  startingBankroll: z.number().int().min(0).max(10_000_000).optional(),
+});
 
 const CasekeepEntrySchema = z.object({ drawn: z.number().int().min(0).max(4), total: z.literal(4) });
 

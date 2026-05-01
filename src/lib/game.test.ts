@@ -1,4 +1,4 @@
-import { newGame, draw, placeBet, resolveTurn, serializeGameState, deserializeGameState } from './game';
+import { newGame, draw, placeBet, resolveTurn, serializeGameState, deserializeGameState, addPlayer, removePlayer, renamePlayer } from './game';
 import { seedFromString, mulberry32 } from './rng';
 import { makeDeck, shuffle } from './cards';
 
@@ -12,7 +12,11 @@ describe('game utilities', () => {
     // 51 cards in deck after soda card is removed
     expect(g1.deck.length).toBe(51);
     expect(g1.sodaCard).toBeDefined();
-    expect(g1.players).toEqual(players);
+    // players preserved with startingBankroll added
+    expect(g1.players[0].id).toBe('p1');
+    expect(g1.players[0].name).toBe('Alice');
+    expect(g1.players[0].bankroll).toBe(100);
+    expect(g1.players[0].startingBankroll).toBe(100);
   });
 
   test('draw moves top card to burnt and reduces deck', () => {
@@ -358,4 +362,71 @@ test('resolveTurn loss-first ordering: losing bets settled before winning bets',
   // after bets: 100-5-10 = 85; loss: 0 extra; win: +20 = 105
   expect(resolved.state.players[0].bankroll).toBe(105);
   expect(resolved.state.bets.length).toBe(0);
+});
+
+// ── New feature: removePlayer enforces minimum 1 player ───────────────────────
+
+test('removePlayer throws when only one player remains', () => {
+  const state = newGame('solo-seed', [{ id: 'p1', name: 'Alice', bankroll: 100 }]);
+  expect(() => removePlayer(state, 'p1')).toThrow('Cannot remove the last player');
+});
+
+test('removePlayer works when two or more players exist', () => {
+  const state = newGame('two-seed', [
+    { id: 'p1', name: 'Alice', bankroll: 100 },
+    { id: 'p2', name: 'Bob', bankroll: 100 },
+  ]);
+  const after = removePlayer(state, 'p2');
+  expect(after.players.length).toBe(1);
+  expect(after.players[0].id).toBe('p1');
+});
+
+// ── New feature: renamePlayer ─────────────────────────────────────────────────
+
+test('renamePlayer changes the name of a player', () => {
+  const state = newGame('rename-seed', [{ id: 'p1', name: 'Alice', bankroll: 100 }]);
+  const after = renamePlayer(state, 'p1', 'Beauregard');
+  expect(after.players[0].name).toBe('Beauregard');
+  expect(after.players[0].id).toBe('p1');
+  expect(after.players[0].bankroll).toBe(100);
+});
+
+test('renamePlayer throws when player not found', () => {
+  const state = newGame('rename-err', [{ id: 'p1', name: 'Alice', bankroll: 100 }]);
+  expect(() => renamePlayer(state, 'unknown', 'Hiram')).toThrow('Player not found');
+});
+
+test('renamePlayer does not mutate original state', () => {
+  const state = newGame('rename-immutable', [{ id: 'p1', name: 'Alice', bankroll: 100 }]);
+  renamePlayer(state, 'p1', 'Cornelius');
+  expect(state.players[0].name).toBe('Alice');
+});
+
+// ── New feature: startingBankroll tracked per player ─────────────────────────
+
+test('newGame sets startingBankroll equal to initial bankroll', () => {
+  const state = newGame('start-bank', [{ id: 'p1', name: 'Alice', bankroll: 200 }]);
+  expect(state.players[0].startingBankroll).toBe(200);
+});
+
+test('startingBankroll is preserved after bets and resolves', () => {
+  const base: any = {
+    seed: 'net-test',
+    deck: [{ rank: 3, suit: 'hearts' }, { rank: 5, suit: 'clubs' }],
+    burnt: [],
+    bets: [],
+    players: [{ id: 'p1', name: 'Alice', bankroll: 100, startingBankroll: 100 }],
+  };
+  const afterBet = placeBet(base, { playerId: 'p1', ranks: [5], amount: 10 });
+  const result = resolveTurn(afterBet);
+  // startingBankroll should still be 100 after a win
+  expect(result.state.players[0].startingBankroll).toBe(100);
+  // bankroll changed (win doubles stake: 90 + 20 = 110)
+  expect(result.state.players[0].bankroll).toBe(110);
+});
+
+test('addPlayer sets startingBankroll on the new player', () => {
+  const state = newGame('add-start', [{ id: 'p1', name: 'Alice', bankroll: 100 }]);
+  const after = addPlayer(state, { id: 'p2', name: 'Bob', bankroll: 300 });
+  expect(after.players[1].startingBankroll).toBe(300);
 });

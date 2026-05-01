@@ -1,27 +1,22 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .player {
   display: flex;
   align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 10px 12px;
+  gap: 6px;
   border: 2px solid rgba(201, 168, 76, 0.2);
   border-radius: 8px;
   background: rgba(0, 0, 0, 0.2);
-  color: #e8dcc8;
-  cursor: pointer;
   transition: all 0.15s ease;
-  text-align: left;
+  overflow: hidden;
 }
 
 .player:hover {
   border-color: rgba(201, 168, 76, 0.5);
-  background: rgba(0, 0, 0, 0.3);
 }
 
 .current {
@@ -30,9 +25,23 @@
   box-shadow: 0 0 8px rgba(201, 168, 76, 0.2);
 }
 
+.playerMain {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  color: #e8dcc8;
+  cursor: pointer;
+  text-align: left;
+}
+
 .avatar {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   background: linear-gradient(135deg, #c9a84c, #a67c2e);
   color: #1a0e00;
@@ -40,24 +49,115 @@
   align-items: center;
   justify-content: center;
   font-weight: 700;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   flex-shrink: 0;
 }
 
 .info {
   min-width: 0;
+  flex: 1;
 }
 
 .name {
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.nameInput {
+  font-weight: 600;
+  font-size: 0.88rem;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(201, 168, 76, 0.6);
+  border-radius: 4px;
+  color: #e8dcc8;
+  padding: 1px 6px;
+  width: 100%;
+  font-family: inherit;
+  outline: none;
+}
+
+.bankRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+}
+
 .bank {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: #8ec88e;
   font-weight: 700;
+}
+
+.netPos {
+  font-size: 0.72rem;
+  color: #4ade80;
+  font-weight: 700;
+}
+
+.netNeg {
+  font-size: 0.72rem;
+  color: #f87171;
+  font-weight: 700;
+}
+
+/* Action buttons (rename, remove) */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 6px 4px 0;
+  flex-shrink: 0;
+}
+
+.actionBtn {
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.actionBtn:hover:not(:disabled) {
+  background: rgba(201, 168, 76, 0.2);
+  color: #c9a84c;
+  border-color: rgba(201, 168, 76, 0.5);
+}
+
+.actionBtn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+}
+
+/* Add player button */
+.addBtn {
+  width: 100%;
+  padding: 7px;
+  border: 1px dashed rgba(201, 168, 76, 0.35);
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(201, 168, 76, 0.6);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color 0.14s, color 0.14s, background 0.14s;
+  font-family: inherit;
+}
+
+.addBtn:hover {
+  border-color: #c9a84c;
+  color: #c9a84c;
+  background: rgba(201, 168, 76, 0.08);
 }

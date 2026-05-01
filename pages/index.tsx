@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -6,10 +6,14 @@ import {
   newGame,
   placeBet,
   resolveTurn,
-  serializeGameState,
+  addPlayer,
+  removePlayer,
+  renamePlayer,
   GameState,
   Rank,
   Card,
+  RANK_LABELS,
+  getRandomCivilWarName,
 } from '../src/lib';
 import CardSVG from '../src/components/CardSVG';
 import CasekeeperPanel from '../src/components/CasekeeperPanel';
@@ -19,24 +23,20 @@ import Controls from '../src/components/Controls';
 import SeedShare from '../src/components/SeedShare';
 import BettingBoard, { PlacedBet } from '../src/components/BettingBoard';
 
-const DEMO_SEED = 'demo-seed-1';
-const RANK_LABELS: Record<number, string> = {
-  1: 'A', 2: '2', 3: '3', 4: '4', 5: '5', 6: '6', 7: '7',
-  8: '8', 9: '9', 10: '10', 11: 'J', 12: 'Q', 13: 'K',
-};
-const DEFAULT_PLAYERS = [
-  { id: 'p1', name: 'Alice', bankroll: 500 },
-  { id: 'p2', name: 'Bob', bankroll: 500 },
-];
-const CHIP_VALUES = [1, 5, 10, 25];
+const CHIP_VALUES = [1, 5, 10, 25, 50, 100];
 
 function rankName(r: Rank): string { return RANK_LABELS[r] ?? String(r); }
 function cardName(c: Card): string { return `${rankName(c.rank as Rank)} of ${c.suit}`; }
 
+let playerCounter = 1;
+function makeDefaultPlayer() {
+  return { id: `p${playerCounter++}`, name: getRandomCivilWarName(), bankroll: 500, startingBankroll: 500 };
+}
+
 const Home: NextPage = () => {
   const router = useRouter();
 
-  const [seed, setSeed] = useState(DEMO_SEED);
+  const [seed, setSeed] = useState(() => `seed-${Math.random().toString(36).slice(2, 9)}`);
   useEffect(() => {
     if (!router?.isReady) return;
     const q = router.query?.seed;
@@ -45,17 +45,22 @@ const Home: NextPage = () => {
 
   const [game, setGame] = useState<GameState | null>(null);
   const [initError, setInitError] = useState(false);
-  const [currentPlayerId, setCurrentPlayerId] = useState('p1');
+  const [currentPlayerId, setCurrentPlayerId] = useState('');
   const [betAmount, setBetAmount] = useState(5);
+  const [customAmount, setCustomAmount] = useState('');
+  const [showCustom, setShowCustom] = useState(false);
   const [coppered, setCoppered] = useState(false);
   const [lastTurn, setLastTurn] = useState<{ winner?: Card; loser?: Card; isHock?: boolean } | null>(null);
   const [message, setMessage] = useState('');
   const [history, setHistory] = useState<GameState[]>([]);
+  const customInputRef = useRef<HTMLInputElement>(null);
 
   const startGame = useCallback((gameSeed: string) => {
     try {
-      const g = newGame(gameSeed, DEFAULT_PLAYERS);
+      const firstPlayer = makeDefaultPlayer();
+      const g = newGame(gameSeed, [firstPlayer]);
       setGame(g);
+      setCurrentPlayerId(firstPlayer.id);
       setInitError(false);
       setLastTurn(null);
       setMessage(`Soda: ${cardName(g.sodaCard!)}`);
@@ -74,6 +79,30 @@ const Home: NextPage = () => {
       router.replace({ query: { seed } }, undefined, { shallow: true });
     }
   }, [seed]);
+
+  const handleAddPlayer = useCallback(() => {
+    if (!game) return;
+    const p = makeDefaultPlayer();
+    setHistory(prev => [...prev, game]);
+    setGame(addPlayer(game, p));
+  }, [game]);
+
+  const handleRemovePlayer = useCallback((id: string) => {
+    if (!game) return;
+    try {
+      setHistory(prev => [...prev, game]);
+      const next = removePlayer(game, id);
+      setGame(next);
+      if (currentPlayerId === id) setCurrentPlayerId(next.players[0].id);
+    } catch (e: any) {
+      setMessage(e?.message || 'Cannot remove player');
+    }
+  }, [game, currentPlayerId]);
+
+  const handleRenamePlayer = useCallback((id: string, name: string) => {
+    if (!game) return;
+    setGame(renamePlayer(game, id, name));
+  }, [game]);
 
   const handleBoardBet = useCallback((ranks: Rank[]) => {
     if (!game || betAmount <= 0) return;
@@ -115,8 +144,21 @@ const Home: NextPage = () => {
     setMessage('Undone.');
   }, [history]);
 
-  const handleNewGame = useCallback(() => setSeed(`seed-${Math.random().toString(36).slice(2, 9)}`), []);
+  const handleNewGame = useCallback(() => {
+    setSeed(`seed-${Math.random().toString(36).slice(2, 9)}`);
+  }, []);
+
   const handleLoadSeed = useCallback((s: string) => { if (s.trim()) setSeed(s.trim()); }, []);
+
+  const handleCustomChip = useCallback(() => {
+    setShowCustom(s => !s);
+    setTimeout(() => customInputRef.current?.focus(), 50);
+  }, []);
+
+  const applyCustomAmount = useCallback(() => {
+    const v = parseInt(customAmount, 10);
+    if (v > 0) { setBetAmount(v); setShowCustom(false); setCustomAmount(''); }
+  }, [customAmount]);
 
   if (initError || !game) {
     return (
@@ -130,7 +172,13 @@ const Home: NextPage = () => {
     );
   }
 
-  const allBets: PlacedBet[] = game.bets.map(b => ({ ranks: b.ranks, amount: b.amount, coppered: b.coppered }));
+  const currentPlayer = game.players.find(p => p.id === currentPlayerId) ?? game.players[0];
+  const allBets: PlacedBet[] = game.bets.map(b => ({
+    ranks: b.ranks,
+    amount: b.amount,
+    coppered: b.coppered,
+    playerId: b.playerId,
+  }));
   const deckPct = Math.round((game.deck.length / 51) * 100);
 
   return (
@@ -152,6 +200,9 @@ const Home: NextPage = () => {
               players={game.players}
               currentPlayerId={currentPlayerId}
               onSwitchPlayer={setCurrentPlayerId}
+              onAddPlayer={handleAddPlayer}
+              onRemovePlayer={handleRemovePlayer}
+              onRenamePlayer={handleRenamePlayer}
             />
           </section>
 
@@ -223,10 +274,23 @@ const Home: NextPage = () => {
             )}
           </section>
 
+          {/* Mobile turn indicator — sticky near the board */}
+          <div className="turn-indicator" aria-label="Current player's turn">
+            <div className="turn-avatar" aria-hidden>
+              {currentPlayer.name.slice(0, 2).toUpperCase()}
+            </div>
+            <div className="turn-info">
+              <span className="turn-name">{currentPlayer.name}</span>
+              <span className="turn-sub">${currentPlayer.bankroll} · Turn {game.turn}</span>
+            </div>
+            {coppered && <span className="turn-copper">© Coppered</span>}
+          </div>
+
           {/* Horseshoe betting board */}
           <BettingBoard
             onBet={handleBoardBet}
             placedBets={allBets}
+            players={game.players}
             winnerRank={lastTurn?.winner?.rank as Rank | undefined}
             loserRank={lastTurn?.loser?.rank as Rank | undefined}
           />
@@ -239,12 +303,37 @@ const Home: NextPage = () => {
                   key={v}
                   value={v}
                   size={44}
-                  onClick={() => setBetAmount(v)}
+                  onClick={() => { setBetAmount(v); setShowCustom(false); }}
                   ariaLabel={`$${v} chip`}
-                  className={betAmount === v ? 'chip-active' : ''}
+                  className={betAmount === v && !showCustom ? 'chip-active' : ''}
                 />
               ))}
+              <button
+                className={`faro-btn btn-custom${showCustom ? ' btn-custom-on' : ''}`}
+                onClick={handleCustomChip}
+                aria-label="Custom bet amount"
+                title="Enter a custom bet amount"
+              >
+                X
+              </button>
             </div>
+
+            {showCustom && (
+              <div className="custom-amount-row">
+                <input
+                  ref={customInputRef}
+                  type="number"
+                  min={1}
+                  className="custom-amount-input"
+                  placeholder="Custom amount"
+                  value={customAmount}
+                  onChange={e => setCustomAmount(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') applyCustomAmount(); }}
+                  aria-label="Custom bet amount input"
+                />
+                <button className="faro-btn" onClick={applyCustomAmount}>Set</button>
+              </div>
+            )}
 
             <div className="action-right">
               <button
