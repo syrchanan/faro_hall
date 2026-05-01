@@ -1,0 +1,179 @@
+.rulesContent {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px 28px 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ── Section card ── */
+.section {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  border-radius: 12px;
+  padding: 22px 24px;
+}
+
+.sectionHeading {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+  opacity: 0.9;
+}
+
+.body {
+  font-size: 0.9rem;
+  color: var(--text-cream);
+  line-height: 1.7;
+  margin: 0 0 12px;
+}
+
+.body:last-child { margin-bottom: 0; }
+
+/* ── Key Terms ── */
+.termList {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.termItem {
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(201, 168, 76, 0.1);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.term {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin: 0 0 5px;
+  display: block;
+}
+
+.desc {
+  font-size: 0.88rem;
+  color: var(--text-cream);
+  line-height: 1.6;
+  margin: 0;
+  opacity: 0.9;
+}
+
+/* ── How to Play steps ── */
+.stepList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: 30px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+
+.stepNum {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid rgba(201, 168, 76, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.stepBody {
+  font-size: 0.9rem;
+  color: var(--text-cream);
+  line-height: 1.65;
+}
+
+.subList {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.subItem {
+  font-size: 0.85rem;
+  color: rgba(232, 220, 200, 0.78);
+  padding-left: 16px;
+  position: relative;
+  line-height: 1.55;
+}
+
+.subItem::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: rgba(201, 168, 76, 0.45);
+}
+
+/* ── Strategy tips ── */
+.tipList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: var(--text-cream);
+  line-height: 1.65;
+}
+
+.tipDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0.7;
+  flex-shrink: 0;
+  margin-top: 9px;
+}
+
+/* ── CTA footer ── */
+.cta {
+  padding-top: 6px;
+  border-top: 1px solid rgba(201, 168, 76, 0.25);
+  display: flex;
+  align-items: center;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .rulesContent { padding: 16px 16px 32px; }
+  .section { padding: 18px 16px; }
+  .step { grid-template-columns: 26px 1fr; gap: 10px; }
+  .stepNum { width: 26px; height: 26px; font-size: 0.7rem; }
+}
