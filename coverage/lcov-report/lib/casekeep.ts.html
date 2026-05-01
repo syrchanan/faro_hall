@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for lib/schemas.ts</title>
+    <title>Code coverage report for lib/casekeep.ts</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../prettify.css" />
     <link rel="stylesheet" href="../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">lib</a> schemas.ts</h1>
+        <h1><a href="../index.html">All files</a> / <a href="index.html">lib</a> casekeep.ts</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">96% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>24/25</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">87.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>7/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>6/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>6/6</span>
+                <span class='fraction'>19/19</span>
             </div>
         
             
@@ -96,72 +96,72 @@
 <a name='L31'></a><a href='#L31'>31</a>
 <a name='L32'></a><a href='#L32'>32</a>
 <a name='L33'></a><a href='#L33'>33</a>
-<a name='L34'></a><a href='#L34'>34</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
+<a name='L34'></a><a href='#L34'>34</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">139x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">259x</span>
+<span class="cline-any cline-yes">259x</span>
+<span class="cline-any cline-yes">259x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">8x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { z } from 'zod';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// src/lib/casekeep.ts
 &nbsp;
-export const CardSchema = z.object({
-  rank: z.number().int().min(1).max(13),
-  suit: z.enum(['hearts','diamonds','clubs','spades'])
-});
+export type CasekeepState = Record&lt;string, { drawn: number; total: 4 }&gt;;
 &nbsp;
-export const BetSchema = z.object({
-  playerId: z.string().min(1),
-  ranks: z.array(z.number().int().min(1).max(13)).min(1).max(4),
-  coppered: z.boolean().optional().default(false),
-  amount: z.number().int().min(1).max(100_000)
-});
+export function createCasekeep(): CasekeepState {
+  return {};
+}
 &nbsp;
-export const PlayerSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  bankroll: z.number().int().min(0).max(10_000_000),
-  startingBankroll: z.number().int().min(0).max(10_000_000).optional(),
-});
+export function recordDraw(casekeep: CasekeepState, card: { rank: number }): CasekeepState {
+  const key = String(card.rank);
+  const existing = casekeep[key] || { drawn: 0, total: 4 as const };
+  return { ...casekeep, [key]: { drawn: existing.drawn + 1, total: 4 } };
+}
 &nbsp;
-const CasekeepEntrySchema = z.object({ drawn: z.number().int().min(0).max(4), total: z.literal(4) });
+export function calculateCaseResults(cases) {
+  if (!Array.isArray(cases)) throw new TypeError('cases must be an array');
+  let wins = 0, losses = 0;
+  cases.forEach(c =&gt; {
+    if (c.result === 'win') wins += 1;
+    else if (c.result === 'lose') losses += 1;
+  });
+  return { wins, losses };
+}
 &nbsp;
-export const GameStateSchema = z.object({
-  seed: z.string(),
-  deck: z.array(CardSchema),
-  burnt: z.array(CardSchema),
-  bets: z.array(BetSchema),
-  players: z.array(PlayerSchema),
-  casekeep: z.record(z.string(), CasekeepEntrySchema).optional(),
-  sodaCard: CardSchema.nullable().optional(),
-  turn: z.number().int().min(0).optional(),
-});
+export function resetCases() {
+  return [];
+}
+&nbsp;
+export function addCase(cases, newCase) {
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (!Array.isArray(cases)) <span class="cstat-no" title="statement not covered" >throw new TypeError('cases must be an array');</span>
+  if (!newCase) throw new TypeError('newCase required');
+  return [...cases, newCase];
+}
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
