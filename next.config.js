@@ -2,7 +2,5 @@
 module.exports = {
   output: 'export',
   trailingSlash: true,
-  basePath: '/faro_hall',
-  assetPrefix: '/faro_hall',
   images: { unoptimized: true },
 };
