@@ -47,7 +47,9 @@ button { font-family: inherit; cursor: pointer; }
 .faro-layout {
   display: grid;
   grid-template-columns: 230px 1fr;
-  gap: 20px;
+  grid-template-rows: auto auto auto 1fr;
+  column-gap: 20px;
+  row-gap: 14px;
   padding: 20px 28px;
   flex: 1;
   max-width: 1280px;
@@ -56,14 +58,13 @@ button { font-family: inherit; cursor: pointer; }
   align-items: start;
 }
 
-/* ── Meta panel (left) ── */
-.faro-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  position: sticky;
-  top: 20px;
-}
+/* Left-column sections */
+.faro-controls   { grid-column: 1; grid-row: 1; }
+.faro-players    { grid-column: 1; grid-row: 2; }
+.faro-casekeeper { grid-column: 1; grid-row: 3; }
+
+/* Main play area spans the full right column */
+.faro-main { grid-column: 2; grid-row: 1 / 5; }
 
 .meta-section {
   background: rgba(0, 0, 0, 0.3);
@@ -80,6 +81,18 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--gold);
   margin: 0 0 10px;
   opacity: 0.85;
+}
+
+/* Toggle button used for collapsible casekeeper heading */
+.meta-heading-toggle {
+  display: flex;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  gap: 6px;
+  align-items: center;
 }
 
 .meta-controls {
@@ -454,19 +467,15 @@ button { font-family: inherit; cursor: pointer; }
 @media (max-width: 900px) {
   .faro-layout {
     grid-template-columns: 1fr;
+    grid-template-rows: auto;
     padding: 14px 16px;
   }
 
-  .faro-meta {
-    position: static;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-
-  .meta-controls {
-    grid-column: 1 / -1;
-  }
+  /* Mobile order: controls → players → casekeeper → main */
+  .faro-controls   { grid-column: 1; grid-row: 1; }
+  .faro-players    { grid-column: 1; grid-row: 2; }
+  .faro-casekeeper { grid-column: 1; grid-row: 3; }
+  .faro-main       { grid-column: 1; grid-row: 4; }
 }
 
 @media (max-width: 600px) {
@@ -475,10 +484,6 @@ button { font-family: inherit; cursor: pointer; }
     gap: 8px;
   }
   .faro-title { font-size: 1rem; letter-spacing: 0.06em; }
-
-  .faro-meta {
-    grid-template-columns: 1fr;
-  }
 
   .deal-cards { gap: 10px; }
   .deal-card-empty { width: 52px; height: 74px; }

@@ -20,10 +20,9 @@ import CasekeeperPanel from '../src/components/CasekeeperPanel';
 import Chip from '../src/components/Chip';
 import PlayerList from '../src/components/PlayerList';
 import Controls from '../src/components/Controls';
-import SeedShare from '../src/components/SeedShare';
 import BettingBoard, { PlacedBet } from '../src/components/BettingBoard';
 
-const CHIP_VALUES = [1, 5, 10, 25, 50, 100];
+const CHIP_VALUES = [1, 10, 100];
 
 function rankName(r: Rank): string { return RANK_LABELS[r] ?? String(r); }
 function cardName(c: Card): string { return `${rankName(c.rank as Rank)} of ${c.suit}`; }
@@ -46,13 +45,15 @@ const Home: NextPage = () => {
   const [game, setGame] = useState<GameState | null>(null);
   const [initError, setInitError] = useState(false);
   const [currentPlayerId, setCurrentPlayerId] = useState('');
-  const [betAmount, setBetAmount] = useState(5);
-  const [customAmount, setCustomAmount] = useState('');
-  const [showCustom, setShowCustom] = useState(false);
+  const [betAmount, setBetAmount] = useState(1);
+  const [customChipAmount, setCustomChipAmount] = useState<number | null>(null);
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [customRawInput, setCustomRawInput] = useState('');
   const [coppered, setCoppered] = useState(false);
   const [lastTurn, setLastTurn] = useState<{ winner?: Card; loser?: Card; isHock?: boolean } | null>(null);
   const [message, setMessage] = useState('');
   const [history, setHistory] = useState<GameState[]>([]);
+  const [casekeeperOpen, setCasekeeperOpen] = useState(true);
   const customInputRef = useRef<HTMLInputElement>(null);
 
   const startGame = useCallback((gameSeed: string) => {
@@ -150,15 +151,22 @@ const Home: NextPage = () => {
 
   const handleLoadSeed = useCallback((s: string) => { if (s.trim()) setSeed(s.trim()); }, []);
 
-  const handleCustomChip = useCallback(() => {
-    setShowCustom(s => !s);
+  const handleXChip = useCallback(() => {
+    setCustomChipAmount(null);
+    setCustomRawInput('');
+    setShowCustomInput(true);
     setTimeout(() => customInputRef.current?.focus(), 50);
   }, []);
 
   const applyCustomAmount = useCallback(() => {
-    const v = parseInt(customAmount, 10);
-    if (v > 0) { setBetAmount(v); setShowCustom(false); setCustomAmount(''); }
-  }, [customAmount]);
+    const v = parseInt(customRawInput, 10);
+    if (v > 0) {
+      setCustomChipAmount(v);
+      setBetAmount(v);
+      setShowCustomInput(false);
+      setCustomRawInput('');
+    }
+  }, [customRawInput]);
 
   if (initError || !game) {
     return (
@@ -185,42 +193,45 @@ const Home: NextPage = () => {
     <div className="faro-app">
       <header className="faro-header">
         <h1 className="faro-title">Faro Hall</h1>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <Link href="/rules" className="faro-btn" aria-label="View Rules">Rules</Link>
-          <SeedShare seed={seed} onImport={handleLoadSeed} />
-        </div>
+        <Link href="/rules" className="faro-btn" aria-label="View Rules">Rules</Link>
       </header>
 
       <div className="faro-layout">
-        {/* ── Meta panel ── */}
-        <aside className="faro-meta">
-          <section className="meta-section">
-            <h2 className="meta-heading">Players</h2>
-            <PlayerList
-              players={game.players}
-              currentPlayerId={currentPlayerId}
-              onSwitchPlayer={setCurrentPlayerId}
-              onAddPlayer={handleAddPlayer}
-              onRemovePlayer={handleRemovePlayer}
-              onRenamePlayer={handleRenamePlayer}
-            />
-          </section>
+        {/* ── Controls ── */}
+        <section className="meta-section meta-controls faro-controls">
+          <Controls
+            onNewGame={handleNewGame}
+            onLoadSeed={handleLoadSeed}
+            onUndo={handleUndo}
+            onOpenRules={() => router.push('/rules')}
+            seed={seed}
+          />
+        </section>
 
-          <section className="meta-section">
-            <h2 className="meta-heading">Casekeeper</h2>
-            <CasekeeperPanel burnt={game.burnt} />
-          </section>
+        {/* ── Players ── */}
+        <section className="meta-section faro-players">
+          <h2 className="meta-heading">Players</h2>
+          <PlayerList
+            players={game.players}
+            currentPlayerId={currentPlayerId}
+            onSwitchPlayer={setCurrentPlayerId}
+            onAddPlayer={handleAddPlayer}
+            onRemovePlayer={handleRemovePlayer}
+            onRenamePlayer={handleRenamePlayer}
+          />
+        </section>
 
-          <section className="meta-section meta-controls">
-            <Controls
-              onNewGame={handleNewGame}
-              onLoadSeed={handleLoadSeed}
-              onUndo={handleUndo}
-              onOpenRules={() => router.push('/rules')}
-              seed={seed}
-            />
-          </section>
-        </aside>
+        {/* ── Casekeeper (collapsible) ── */}
+        <section className="meta-section faro-casekeeper">
+          <button
+            className="meta-heading meta-heading-toggle"
+            onClick={() => setCasekeeperOpen(o => !o)}
+            aria-expanded={casekeeperOpen}
+          >
+            Casekeeper {casekeeperOpen ? '▲' : '▼'}
+          </button>
+          {casekeeperOpen && <CasekeeperPanel burnt={game.burnt} />}
+        </section>
 
         {/* ── Main play area ── */}
         <main className="faro-main">
@@ -274,7 +285,7 @@ const Home: NextPage = () => {
             )}
           </section>
 
-          {/* Mobile turn indicator — sticky near the board */}
+          {/* Mobile turn indicator */}
           <div className="turn-indicator" aria-label="Current player's turn">
             <div className="turn-avatar" aria-hidden>
               {currentPlayer.name.slice(0, 2).toUpperCase()}
@@ -293,6 +304,7 @@ const Home: NextPage = () => {
             players={game.players}
             winnerRank={lastTurn?.winner?.rank as Rank | undefined}
             loserRank={lastTurn?.loser?.rank as Rank | undefined}
+            burnt={game.burnt}
           />
 
           {/* Action bar: chips + copper + deal */}
@@ -303,22 +315,38 @@ const Home: NextPage = () => {
                   key={v}
                   value={v}
                   size={44}
-                  onClick={() => { setBetAmount(v); setShowCustom(false); }}
+                  onClick={() => {
+                    setBetAmount(v);
+                    setCustomChipAmount(null);
+                    setShowCustomInput(false);
+                  }}
                   ariaLabel={`$${v} chip`}
-                  className={betAmount === v && !showCustom ? 'chip-active' : ''}
+                  className={betAmount === v && customChipAmount === null ? 'chip-active' : ''}
                 />
               ))}
-              <button
-                className={`faro-btn btn-custom${showCustom ? ' btn-custom-on' : ''}`}
-                onClick={handleCustomChip}
-                aria-label="Custom bet amount"
-                title="Enter a custom bet amount"
-              >
-                X
-              </button>
+
+              {/* Custom chip — appears after a custom amount is entered */}
+              {customChipAmount !== null && (
+                <Chip
+                  value={customChipAmount}
+                  size={44}
+                  onClick={() => setBetAmount(customChipAmount)}
+                  ariaLabel={`$${customChipAmount} custom chip`}
+                  className={betAmount === customChipAmount ? 'chip-active' : ''}
+                />
+              )}
+
+              {/* X chip — clears custom and opens input */}
+              <Chip
+                value="X"
+                size={44}
+                onClick={handleXChip}
+                ariaLabel="Custom bet amount"
+                className={showCustomInput ? 'chip-active' : ''}
+              />
             </div>
 
-            {showCustom && (
+            {showCustomInput && (
               <div className="custom-amount-row">
                 <input
                   ref={customInputRef}
@@ -326,8 +354,8 @@ const Home: NextPage = () => {
                   min={1}
                   className="custom-amount-input"
                   placeholder="Custom amount"
-                  value={customAmount}
-                  onChange={e => setCustomAmount(e.target.value)}
+                  value={customRawInput}
+                  onChange={e => setCustomRawInput(e.target.value)}
                   onKeyDown={e => { if (e.key === 'Enter') applyCustomAmount(); }}
                   aria-label="Custom bet amount input"
                 />

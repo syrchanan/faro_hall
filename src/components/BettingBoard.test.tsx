@@ -5,6 +5,30 @@ import { Rank } from '../lib/cards';
 
 const noop = () => {};
 
+describe('BettingBoard casekeep dots', () => {
+  test('renders 4 case dots per card rank (13 cards × 4 = 52 total)', () => {
+    const { container } = render(<BettingBoard onBet={noop} placedBets={[]} burnt={[]} />);
+    const allDots = container.querySelectorAll('[data-casedot]');
+    expect(allDots.length).toBe(52);
+  });
+
+  test('lights up the correct number of filled dots for burnt cards', () => {
+    const burnt = [{ rank: 7 }, { rank: 7 }, { rank: 7 }];
+    render(<BettingBoard onBet={noop} placedBets={[]} burnt={burnt} />);
+    const sevenBtn = screen.getAllByRole('button').find(b =>
+      b.getAttribute('aria-label') === 'Bet on 7'
+    )!;
+    expect(sevenBtn.querySelectorAll('[data-casedot="filled"]').length).toBe(3);
+    expect(sevenBtn.querySelectorAll('[data-casedot="empty"]').length).toBe(1);
+  });
+
+  test('all dots empty when burnt prop is absent', () => {
+    const { container } = render(<BettingBoard onBet={noop} placedBets={[]} />);
+    const filled = container.querySelectorAll('[data-casedot="filled"]');
+    expect(filled.length).toBe(0);
+  });
+});
+
 describe('BettingBoard layout zones', () => {
   test('renders a bet zone covering ranks 6, 7, and 8 (three-way end zone)', () => {
     render(<BettingBoard onBet={noop} placedBets={[]} />);
