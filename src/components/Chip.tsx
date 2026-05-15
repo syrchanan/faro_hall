@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './styles/chip.module.css';
 
-export interface ChipProps { size?: number; value: number; coppered?: boolean; ariaLabel?: string; onClick?: () => void; className?: string; }
+export interface ChipProps { size?: number; value: number | string; coppered?: boolean; ariaLabel?: string; onClick?: () => void; className?: string; }
 
 const Chip: React.FC<ChipProps> = ({ size = 40, value, coppered = false, ariaLabel, onClick, className }) => {
   const style: React.CSSProperties = { width: size, height: size };

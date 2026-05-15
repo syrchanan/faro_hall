@@ -16,6 +16,7 @@ export interface BettingBoardProps {
   loserRank?: Rank;
   className?: string;
   players?: { id: string; name: string; bankroll: number }[];
+  burnt?: { rank: number }[];
 }
 
 function zoneKey(ranks: Rank[]): string {
@@ -107,8 +108,16 @@ const BettingBoard: React.FC<BettingBoardProps> = ({
   loserRank,
   className,
   players = [],
+  burnt,
 }) => {
   const [hoveredRanks, setHoveredRanks] = useState<Rank[] | null>(null);
+
+  const burntCounts = new Map<number, number>();
+  if (burnt) {
+    for (const b of burnt) {
+      burntCounts.set(b.rank, (burntCounts.get(b.rank) ?? 0) + 1);
+    }
+  }
 
   // Build per-player index for color assignment
   const playerIndex = new Map<string, number>();
@@ -164,6 +173,7 @@ const BettingBoard: React.FC<BettingBoardProps> = ({
     const isWinner = winnerRank === card.rank;
     const isLoser = loserRank === card.rank;
     const isSpanning = card.rowEnd - card.rowStart > 1;
+    const drawn = burntCounts.get(card.rank) ?? 0;
 
     const cls = [
       styles.card,
@@ -174,9 +184,6 @@ const BettingBoard: React.FC<BettingBoardProps> = ({
     ].filter(Boolean).join(' ');
 
     const gridRow = isSpanning ? `${card.rowStart} / ${card.rowEnd}` : String(card.rowStart);
-    const totalBet = hasBet
-      ? (chips as any[]).reduce((sum: number, c: any) => sum + 0, 0)
-      : 0;
 
     return (
       <button
@@ -188,6 +195,15 @@ const BettingBoard: React.FC<BettingBoardProps> = ({
         onMouseLeave={() => setHoveredRanks(null)}
         aria-label={`Bet on ${RANK_LABELS[card.rank]}${hasBet ? `, bets placed` : ''}`}
       >
+        <div className={styles.caseDots} aria-hidden>
+          {[0, 1, 2, 3].map(i => (
+            <span
+              key={i}
+              className={i < drawn ? styles.caseDotFilled : styles.caseDotEmpty}
+              data-casedot={i < drawn ? 'filled' : 'empty'}
+            />
+          ))}
+        </div>
         <span className={styles.cardRank}>{RANK_LABELS[card.rank]}</span>
         <span className={styles.cardSuit}>♠</span>
         {hasBet && <div className={styles.chipStack}>{chips}</div>}
